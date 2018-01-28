@@ -1,2 +1,12 @@
 <h1>{{title}}</h1>
-<app-work-order></app-work-order>
+<nav>
+  <a routerLink="/work-order-list" routerLinkActive="active">Work Orders</a>
+  <a routerLink="/work-order-create" routerLinkActive="active">Create</a>
+  <a routerLink="/admin" routerLinkActive="active">Admin</a>
+</nav>
+<div class="container">
+  <div class="col-md-12">
+    <app-message></app-message>
+    <router-outlet></router-outlet>
+  </div>
+<div>

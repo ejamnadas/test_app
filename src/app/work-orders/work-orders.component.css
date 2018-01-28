@@ -1,0 +1,31 @@
+.row .selected{
+  background-color: #F0FFFF;
+  border: 1px solid  #f2f2f2;
+}
+
+.alternate:nth-child(1){
+    background:#f2f2f2;
+}
+.alternate:nth-child(even){
+    background:#f2f2f2;
+}
+
+.limit-length{
+  white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ max-width: 100%;
+}
+
+.row.row-underline {
+    border-bottom: 1px solid lightgray;
+}
+
+.table-header{
+  background: wheat;
+}
+
+.row-content{
+  padding-bottom: 1em;
+  border-bottom: 1px solid;
+}

@@ -1,0 +1,38 @@
+<h2>Work Orders</h2>
+<div class="row">
+<div class="col-md-6">
+    <div class="row sticky-top table-header">
+      <div class="col-md-6">Work Order</div>
+      <div class="col-md-2">Assigned To</div>
+      <div class="col-md-2">Due</div>
+      <div class="col-md-2">Priority</div>
+    </div>
+    <div class="tablecontent">
+  <div *ngFor="let workOrder of workOrders"
+    [class.selected]="workOrder === selectedWorkOrder"
+    (click)="onSelect(workOrder)" class="container alternate limit-length row-content" >
+    <div class="row row-underline">
+      <div class="col-md-6">{{workOrder.title}}</div>
+      <div class="col-md-2"><p *ngIf="workOrder.assignedTo">{{workOrder.assignedTo.firstName}}</p></div>
+      <div class="col-md-2">{{workOrder.dueDate}}</div>
+      <div class="col-md-2">{{workOrder.workOrderPriority.description}}</div>
+      <!-- <div class="col-md-1">{{workOrder.dueDate}}</div>
+      <div class="col-md-1">{{workOrder.workOrderPriority.description}}</div>
+    -->
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <p class="limit-length">{{workOrder.description}}</p>
+      </div>
+  <!--    <div class="col-md-2">
+        <p class="limit-length">{{workOrder.department.description}}</p>
+      </div>
+    -->
+    </div>
+  </div>
+  </div>
+  </div>
+  <div class="col-md-6">
+   <app-work-order-detail [workOrder]="selectedWorkOrder"></app-work-order-detail>
+  </div>
+</div>
