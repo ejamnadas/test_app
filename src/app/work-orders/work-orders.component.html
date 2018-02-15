@@ -1,4 +1,11 @@
 <h2>Work Orders</h2>
+
+<ul class="nav small">
+  <li [class.selected]="1===1" class="list-group-item" (click)="filter('1')">NEW</li>
+  <li class="list-group-item" (click)="filter('2')">IN-PROGRESS</li>
+  <li class="list-group-item" (click)="filter('4')">COMPLETED</li>
+</ul>
+
 <div class="row">
 <div class="col-md-6">
     <div class="row sticky-top table-header">
@@ -22,7 +29,7 @@
     </div>
     <div class="row">
       <div class="col-md-8">
-        <p class="limit-length">{{workOrder.description}}</p>
+        <p class="limit-length">{{workOrder.description}} {{testVal}}</p>
       </div>
   <!--    <div class="col-md-2">
         <p class="limit-length">{{workOrder.department.description}}</p>
@@ -33,6 +40,8 @@
   </div>
   </div>
   <div class="col-md-6">
-   <app-work-order-detail [workOrder]="selectedWorkOrder"></app-work-order-detail>
+   <app-work-order-detail [workOrder]="selectedWorkOrder"
+    [workOrderStatusList]="workOrderStatusList"
+    (onWoUpdated)="onWoUpdated($event)" ></app-work-order-detail>
   </div>
 </div>

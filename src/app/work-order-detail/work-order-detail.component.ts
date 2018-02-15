@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { RWorkOrder } from '../entities/RWorkOrder';
 import { WorkOrder } from '../entities/WorkOrder';
 import { WorkOrderNote } from '../entities/WorkOrderNote';
@@ -15,12 +15,15 @@ import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angu
 export class WorkOrderDetailComponent implements OnInit {
 
   @Input() workOrder: WorkOrder;
-  workOrderStatusList: WorkOrderStatus[];
+  @Input() workOrderStatusList: WorkOrderStatus[];
+  @Output() onWoUpdated = new EventEmitter<boolean>();
+  //workOrderStatusList: WorkOrderStatus[];
   workOrderForm : FormGroup;
   workOrderMod: WorkOrder;
 
   workOrderStatusId: number;
   woStatusOrig: number;
+  componentName: string;
 
   getWorkOrderStatusList(): void{
 
@@ -28,8 +31,13 @@ export class WorkOrderDetailComponent implements OnInit {
       .subscribe(workOrderStatusTypes => this.workOrderStatusList = workOrderStatusTypes);
   }
 
+
   getNotes(): FormArray {
     return this.workOrderForm.get('workOrderNotes') as FormArray;
+  }
+
+  get workOrderNotes(): FormArray{
+      return this.workOrderForm.get('workOrderNotes') as FormArray;
   }
 
   createForm(): void{
@@ -42,10 +50,12 @@ export class WorkOrderDetailComponent implements OnInit {
   }
 
   resetForm(): void {
+    if(this.workOrder){
     console.log('method: resetForm');
+    console.log(this.workOrder);
     if (this.workOrder){
       this.workOrderForm.reset ({
-        workOrderStatus: this.workOrder.workOrderStatusId,
+        workOrderStatus: this.workOrder.workOrderStatus.description,
         completedDate: this.workOrder.completedDate
       });
 
@@ -54,7 +64,8 @@ export class WorkOrderDetailComponent implements OnInit {
     }
 
     //this.woStatusOrig = this.workOrder.workOrderStatus.id;
-    this.woStatusOrig = this.workOrder.workOrderStatusId;
+    this.woStatusOrig = this.workOrder.workOrderStatus.id;
+    }
   }
 
   setNotes(notes: WorkOrderNote[]) {
@@ -73,9 +84,7 @@ export class WorkOrderDetailComponent implements OnInit {
     }));
   }
 
-  get workOrderNotes(): FormArray{
-      return this.workOrderForm.get('workOrderNotes') as FormArray;
-  }
+
 
   statusChange(): void{
     console.log("status changes");
@@ -98,31 +107,42 @@ export class WorkOrderDetailComponent implements OnInit {
     }
   }
 
-
-  ngOnChanges(){
-
-    this.getWorkOrderStatusList();
-    this.resetForm();
-
-    //this.addWorkOrderNote();
+  onSubmit():void{
+    console.log("submitted");
+    this.workOrderMod = this.preSaveWorkOrder();
+    console.log("update wo json: " + JSON.stringify(this.workOrderMod));
+    this.workOrderService.updateWorkOrder(this.workOrderMod)
+      //.subscribe(wo => console.log(wo.id));
+      .subscribe(wo =>
+         this.woUpdated(true));
+    //this.woUpdated(true);
   }
 
   preSaveWorkOrder(): WorkOrder{
       const formModel = this.workOrderForm.value;
 
+      console.log('preSaveWorkOrder workOrderStatus: ' + this.workOrderForm.get('workOrderStatus').value);
       switch(this.workOrderForm.get('workOrderStatus').value){
         case "COMPLETE":{
+
           this.workOrderStatusId = 4;
+          //console.log('Complete' + this.workOrderStatusId);
+          break;
         }
         case "NEW": {
           this.workOrderStatusId = 1;
+          //console.log('New' + this.workOrderStatusId);
+          break;
         }
         case "IN-PROGRESS": {
           this.workOrderStatusId = 2;
+          //console.log('In PROGRESS' + this.workOrderStatusId);
+          break;
         }
+
     }
 
-      console.log("work order status id: " + this.workOrderStatusId);
+      //console.log("work order status id: " + this.workOrderStatusId);
       let wo = new WorkOrder();
       wo.id = this.workOrder.id;
       wo.workOrderStatusId = this.workOrderStatusId;
@@ -130,26 +150,12 @@ export class WorkOrderDetailComponent implements OnInit {
       wo.workOrderNotes = formModel.workOrderNotes;
 
       const saveWorkOrder: WorkOrder = wo;
-/*
-      const saveWorkOrder: WorkOrder = {
-        id: this.workOrder.id,
-        workOrderStatusId: this.workOrderStatusId,
-        completedDate: formModel.completedDate,
-        workOrderNotes: formModel.workOrderNotes
-      };
-
-  */    console.log("presave work order result" + saveWorkOrder);
       return saveWorkOrder;
   }
 
-  onSubmit():void{
-    console.log("submitted");
-    this.workOrderMod = this.preSaveWorkOrder();
-    console.log(JSON.stringify(this.workOrderMod));
-    this.workOrderService.updateWorkOrder(this.workOrderMod)
-      .subscribe(wo => console.log(wo.id));
+  woUpdated(updated: boolean) {
+    this.onWoUpdated.emit(true);
   }
-
 
 
   get completedDate() { return this.workOrderForm.get('completedDate'); }
@@ -157,8 +163,45 @@ export class WorkOrderDetailComponent implements OnInit {
   get workOrderStatus() { return this.workOrderForm.get('workOrderStatus'); }
 
 
+  disabledStatus(status: String) : String{
+    //console.log(status);
+    let result : String;
+    let stateDescription : String =
+        this.workOrder.workOrderStatus.description;
+
+    switch(status){
+      case 'NEW': {
+        if(stateDescription == 'COMPLETE' || stateDescription == 'IN-PROGRESS'){
+          result = 'disabled'
+        }else{
+          result = null;
+        }
+
+        break;
+      }
+
+      case 'IN-PROGRESS' : {
+        if(stateDescription == 'COMPLETE'){
+          result = 'disabled'
+        }else{
+          result = null;
+        }
+
+        break;
+      }
+      default: {
+        result = null;
+        break;
+      }
+    }
+    console.log(result);
+    return result;
+  }
+
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService ) {
+    this.componentName = 'work-order-detail';
+    console.log('work-order')
     this.createForm();
   }
 
@@ -166,4 +209,8 @@ export class WorkOrderDetailComponent implements OnInit {
 
   }
 
+  ngOnChanges(){
+    console.log('ngOneChanges');
+    this.resetForm();
+  }
 }

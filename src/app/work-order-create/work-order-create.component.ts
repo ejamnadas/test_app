@@ -7,6 +7,7 @@ import { LocationUnit } from '../entities/LocationUnit';
 import { WorkOrderCategory } from '../entities/WorkOrderCategory';
 import { WorkOrderNote } from '../entities/WorkOrderNote';
 import { WorkOrderPriority } from '../entities/WorkOrderPriority';
+import { Router } from '@angular/router';
 
 //import { DEPARTMENTS, LOCATIONUNITS, WORKORDERTYPES, ASSETS, EMPLOYEES  } from '../lovs/lovs';
 
@@ -28,7 +29,26 @@ export class WorkOrderCreateComponent implements OnInit {
   locationUnits: LocationUnit[];
   assets: Asset[];
 
-  constructor(private fb: FormBuilder, private workOrderService: WorkOrderService) { }
+  constructor(private fb: FormBuilder, private workOrderService: WorkOrderService,
+    private router: Router) { }
+
+  getFormLists(): void{
+    console.log('getFormLists');
+    this.workOrderService.getCreateWoLists()
+      .subscribe(
+        data=>{
+          this.locationUnits = data[0],
+          this.workOrderCategories = data[1],
+          this.workOrderPriorityList = data[2],
+          this.taskDepartments = data[3],
+          this.assignedTos = data[4],
+          console.log('combined re:' + JSON.stringify(data))
+        },
+        err=>{
+          console.log('error getting lists');
+        }
+      );
+  }
 
   getWorkOrderPriorityList(): void{
     this.workOrderService.getWorkOrderPriorityList()
@@ -106,17 +126,25 @@ export class WorkOrderCreateComponent implements OnInit {
 
           this.workOrder = this.preSaveWorkOrder();
           this.workOrderService.addWorkOrder(this.workOrder)
-            .subscribe();
+            .subscribe(
+              success=> {
+                this.router.navigate(['work-order-list']);
+                console.log('wo added');
+                        },
+              err=> { console.log('error adding wo')}
+            );
     }
 
 
 
   ngOnInit() {
-    this.getWorkOrderPriorityList();
-    this.getDepartments();
-    this.getWorkOrderTypes();
-    this.getAssignedTos();
-    this.getLocationUnits();
+    //this.getWorkOrderPriorityList();
+  //jh  this.getDepartments();
+    //this.getWorkOrderTypes();
+   // this.getAssignedTos();
+    //this.getLocationUnits();
+
+    this.getFormLists();
 
     this.createForm();
   }

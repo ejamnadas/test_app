@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, retry } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { HttpClient } from '@angular/common/http';
 import { WorkOrder } from './entities/WorkOrder';
 import { RWorkOrder } from './entities/RWorkOrder';
@@ -34,18 +35,28 @@ export class WorkOrderService {
       tap((workOrder: WorkOrder) => this.log(`updated work order id=${workOrder.id}`)),
       catchError(this.handleError<WorkOrder>('updateWorkOrder'))
     );
-
   }
 
   getWorkOrders(departmentId: number): Observable<any>{
+    console.log('getWorkOrders');
     return this.http.get( REST_URL + 'work_order_service/get/' + departmentId ).pipe(
-      tap(workOrders => console.log('fetched work orders' ))
-      //catchError(this.handleError<RWorkOrder[]>('getWorkOrders'))
+      retry(3),
+      catchError(this.handleError<RWorkOrder[]>('getWorkOrders'))
     );
+
   }
 
+  getWorkOrdersByStatus(departmentId: number, statusId: number): Observable<any>{
+    console.log('getWorkOrdersByStatus');
+    return this.http.get( REST_URL + 'work_order_service/getByStatus/' + departmentId + '/' + statusId ).pipe(
+      retry(3),
+      catchError(this.handleError<RWorkOrder[]>('getWorkOrders'))
+    );
+
+  }
   getWorkOrderStatusTypes():Observable<WorkOrderStatus[]>{
     return this.http.get<WorkOrderStatus[]>(REST_URL + 'work_order_service/getWorkOrderStatuses' ).pipe(
+      retry(3),
       tap(workOrderStatuses => console.log('fetched work order status types')),
       catchError(this.handleError<WorkOrderStatus[]>('/getWorkOrdersStatuses'))
     );
@@ -84,6 +95,21 @@ export class WorkOrderService {
       tap(results => console.log('fetched location units' + JSON.stringify(results))),
       catchError(this.handleError<LocationUnit[]>('getLocationUnits'))
     );
+  }
+
+//get AssignedTo, Priority, Department, Task Type, Room;
+  getCreateWoLists():Observable{
+    return Observable.forkJoin(
+      this.http.get<LocationUnit[]>(REST_URL + 'work_order_service/getLocationUnit'),
+      this.http.get<WorkOrderCategory[]>(REST_URL + 'work_order_service/getWorkOrderCategory'),
+      this.http.get<WorkOrderPriority[]>(REST_URL + 'work_order_service/getWorkOrderPriorities'),
+      this.http.get<WorkOrderDepartment[]>(REST_URL + 'work_order_service/getDepartments'),
+      this.http.get<RUser[]>(REST_URL + 'work_order_service/getUsers'),
+
+
+    )
+    .catch(this.handleError('getCreateWoLists error'));
+
   }
 
   private handleError<T> (operation = 'operation', result?: T) {

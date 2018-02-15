@@ -16,7 +16,9 @@
            <div class="form-group">
             <h3>Status</h3>
             <label *ngFor="let status of workOrderStatusList" class="radio-inline padding">
-              <input (change)="statusChange()" type="radio" formControlName="workOrderStatus" class="form-control" value="{{status.description}}">
+              <input (change)="statusChange()" type="radio" formControlName="workOrderStatus" class="form-control" value="{{status.description}}"
+                [attr.disabled]="disabledStatus(status.description)">
+
               {{status.description}}
             </label>
               <!-- <input type="radio" formControlName="workOrderStatus" class="form-control" ng-value="1">
