@@ -1,5 +1,9 @@
 import { RUser } from './RUser';
 import { LocationUnit } from './LocationUnit';
+import { WorkOrderStatus } from './WorkOrderStatus';
+import { WorkOrderNote } from './WorkOrderNote';
+import { WorkOrderJob } from './WorkOrderJob';
+
 export class RWorkOrder{
 
   id: number;
@@ -12,10 +16,13 @@ export class RWorkOrder{
   assignedBy: RUser;
   orgUnit: number;
   dueDate: string;
-  completeDate: string;
+  completedDate: string;
   workOrderPriorityId: number;
   locationUnit: LocationUnit;
-  workOrderStatusId: number;
+//  workOrderStatusId: number;
+  workOrderStatus: WorkOrderStatus;
+  workOrderNotes: WorkOrderNote[];
+  workOrderJob: WorkOrderJob;
 
   constructor(){
 

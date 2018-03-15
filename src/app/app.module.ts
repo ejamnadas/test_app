@@ -14,10 +14,16 @@ import { WorkOrderCommentsComponent } from './work-order-comments/work-order-com
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { WorkOrdersComponent } from './work-orders/work-orders.component';
 import { WorkOrderService } from './work-order.service';
+import { UserService } from './user.service';
 import { WorkOrderDetailComponent } from './work-order-detail/work-order-detail.component';
 import { LoginComponent } from './login.component';
 import { WorkOrderCreateComponent } from './work-order-create/work-order-create.component';
+import { AuthService } from './auth.service';
+import { TenantAuthService } from './auth/tenant/tenant-auth.service';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { TenantModule } from './auth/tenant/tenant.module';
 /*
 const appRoutes: Routes = [
   { path: 'work-order-list', component: WorkOrdersComponent},
@@ -26,6 +32,16 @@ const appRoutes: Routes = [
   { path: '**', component: PageNotFoundComponent }
 ];
 */
+
+var firebaseConfig = {
+   apiKey: "AIzaSyC87JhbrxVGMHEUd2pEnUM3jFXxUEantVE",
+   authDomain: "hotel-maintenance-9564e.firebaseapp.com",
+   databaseURL: "https://hotel-maintenance-9564e.firebaseio.com",
+   projectId: "hotel-maintenance-9564e",
+   storageBucket: "hotel-maintenance-9564e.appspot.com",
+   messagingSenderId: "413985507539"
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,9 +60,13 @@ const appRoutes: Routes = [
     HttpClientModule,
     LoginRoutingModule,
     AdminModule,
+    TenantModule,
     AppRoutingModule,
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule
   ],
-  providers: [WorkOrderService, MessageService],
+  providers: [WorkOrderService, MessageService, AuthService, UserService, 
+    TenantAuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

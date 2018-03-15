@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { WorkOrderService } from '../work-order.service';
 import { RUser } from '../entities/RUser';
 import { WorkOrder } from '../entities/WorkOrder';
@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 //import { DEPARTMENTS, LOCATIONUNITS, WORKORDERTYPES, ASSETS, EMPLOYEES  } from '../lovs/lovs';
 
 import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import { WorkOrderJob } from '../entities/WorkOrderJob';
 
 @Component({
   selector: 'app-work-order-create',
@@ -28,12 +29,16 @@ export class WorkOrderCreateComponent implements OnInit {
   workOrderCategories: WorkOrderCategory[];
   locationUnits: LocationUnit[];
   assets: Asset[];
+  woJobList: WorkOrderJob[];
+
+  @ViewChild('fileInput') fileInput: ElementRef;
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService,
     private router: Router) { }
 
   getFormLists(): void{
     console.log('getFormLists');
+    
     this.workOrderService.getCreateWoLists()
       .subscribe(
         data=>{
@@ -42,6 +47,7 @@ export class WorkOrderCreateComponent implements OnInit {
           this.workOrderPriorityList = data[2],
           this.taskDepartments = data[3],
           this.assignedTos = data[4],
+          this.woJobList = data[5].woJobList,
           console.log('combined re:' + JSON.stringify(data))
         },
         err=>{
@@ -78,6 +84,21 @@ export class WorkOrderCreateComponent implements OnInit {
       .subscribe(result => this.locationUnits = result);
   }
 
+  onFileChange(event) {
+    let reader = new FileReader();
+    if(event.target.files && event.target.files.length > 0) {
+      let file = event.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.workOrderForm.get('photo').setValue({
+          filename: file.name,
+          filetype: file.type,
+          value: reader.result.split(',')[1]
+        })
+      };
+    }
+  }
+
   createForm(){
     this.workOrderForm = this.fb.group({
       title: ['', Validators.required],
@@ -88,6 +109,8 @@ export class WorkOrderCreateComponent implements OnInit {
       workOrderCategoryId: ['', Validators.required],
       unitId: ['', Validators.required],
       dueDate: ['', Validators.required],
+      jobId: ['', Validators.required],
+      photo: null
 
     });
 
@@ -115,7 +138,9 @@ export class WorkOrderCreateComponent implements OnInit {
           assignedBy: 1,
           orgUnit: 1,
           completedDate: null,
-          workOrderNotes: null
+          workOrderNotes: null,
+          jobId: formModel.jobId
+         // photo: formModel.photo 
 
       };
 
@@ -125,6 +150,7 @@ export class WorkOrderCreateComponent implements OnInit {
     onSubmit():void {
 
           this.workOrder = this.preSaveWorkOrder();
+          console.log('wo save:'  + JSON.stringify(this.workOrder));
           this.workOrderService.addWorkOrder(this.workOrder)
             .subscribe(
               success=> {

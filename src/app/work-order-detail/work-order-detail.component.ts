@@ -14,9 +14,11 @@ import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angu
 })
 export class WorkOrderDetailComponent implements OnInit {
 
-  @Input() workOrder: WorkOrder;
+  @Input() workOrder: RWorkOrder;
   @Input() workOrderStatusList: WorkOrderStatus[];
   @Output() onWoUpdated = new EventEmitter<boolean>();
+  @Output() onBackFromDtl = new EventEmitter<boolean>();
+
   //workOrderStatusList: WorkOrderStatus[];
   workOrderForm : FormGroup;
   workOrderMod: WorkOrder;
@@ -107,6 +109,11 @@ export class WorkOrderDetailComponent implements OnInit {
     }
   }
 
+  onBackFromDetail(el: string):void{
+
+    this.onBackFromDtl.emit(true);
+  }
+
   onSubmit():void{
     console.log("submitted");
     this.workOrderMod = this.preSaveWorkOrder();
@@ -194,9 +201,11 @@ export class WorkOrderDetailComponent implements OnInit {
         break;
       }
     }
-    console.log(result);
+//    console.log(result);
     return result;
   }
+
+
 
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService ) {

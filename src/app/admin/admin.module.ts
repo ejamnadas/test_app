@@ -7,16 +7,23 @@ import { ReportsComponent }    from './reports.component';
 
 import { AdminRoutingModule }       from './admin-routing.module';
 import { AuthGuard } from '../auth-guard.service';
+import { SignupComponent } from './signup/signup.component';
+import { FormsModule } from '@angular/forms';
+import { SigninComponent } from './signin/signin.component';
+
 
 @NgModule({
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    FormsModule
   ],
   declarations: [
     AdminComponent,
     AdminDashboardComponent,
     ReportsComponent,
+    SignupComponent,
+    SigninComponent,
   ],
   providers: [AuthGuard]
 })

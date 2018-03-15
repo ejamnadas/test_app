@@ -8,6 +8,7 @@ export class MessageService {
   private messages: string[] = [];
 
   add (message: string): void {
+        this.clear();
         this.messages.push(message);
   }
 

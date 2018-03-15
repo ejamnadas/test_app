@@ -1,4 +1,5 @@
 import { WorkOrderNote } from './WorkOrderNote';
+import { WorkOrderJob } from './WorkOrderJob';
 
 export class WorkOrder{
 
@@ -18,6 +19,9 @@ export class WorkOrder{
   unitId: number;
   workOrderStatusId: number;
   workOrderNotes: WorkOrderNote[];
+  jobId: number; 
+//  photo: string | any;
+  //base64ImageString: string;  
 
   constructor(){
 

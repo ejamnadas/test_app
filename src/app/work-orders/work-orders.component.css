@@ -29,3 +29,11 @@
   padding-bottom: 1em;
   border-bottom: 1px solid;
 }
+
+.border-header{
+  border: 1px solid black;
+}
+
+.border-detail{
+  border: 1px solid grey;
+}

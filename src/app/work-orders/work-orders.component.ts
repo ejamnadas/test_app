@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkOrderService } from '../work-order.service';
 import { RWorkOrder } from '../entities/RWorkOrder';
+import { WorkOrderStatus } from '../entities/WorkOrderStatus';
+import { Element } from '@angular/compiler';
 
 @Component({
   selector: 'app-work-orders',
@@ -10,15 +12,18 @@ import { RWorkOrder } from '../entities/RWorkOrder';
 export class WorkOrdersComponent implements OnInit {
 
   workOrders: RWorkOrder[];
-  workOrderStatusList: WorkOrderStatusList[];
+  workOrderStatusList: WorkOrderStatus[];
   selectedWorkOrder: RWorkOrder;
   testVal: number;
   statusFilter: number;
   deptFilter: number
+  viewDetail: boolean;
 
   getWorkOrders(): void {
     this.workOrderService.getWorkOrdersByStatus(this.deptFilter,this.statusFilter)
-      .subscribe(workOrders => { this.workOrders = workOrders},
+      .subscribe(workOrders => { 
+        this.workOrders = workOrders
+      },
        error => {
          console.log('error getWorkOrders');
        });
@@ -28,9 +33,14 @@ export class WorkOrdersComponent implements OnInit {
        console.log(this.testVal);
   }
 
-  onSelect(workOrder: RWorkOrder): void{
+  onSelect(workOrder: RWorkOrder, el): void{
+    //this.viewDetail = true;
+    console.log(this.viewDetail);
     this.selectedWorkOrder = workOrder;
+    console.log(el);
+    el.scrollIntoView();
   }
+
 
   constructor(private workOrderService: WorkOrderService) { }
 
@@ -38,9 +48,10 @@ export class WorkOrdersComponent implements OnInit {
     this.testVal = 0;
     this.statusFilter = 1;
     this.deptFilter = 0;
-    this.getWorkOrders(1);
+    this.getWorkOrders();
 
     this.getWorkOrderStatusList();
+    this.viewDetail = false;
   }
 
   getWorkOrderStatusList(): void{
@@ -52,7 +63,13 @@ export class WorkOrdersComponent implements OnInit {
 
   onWoUpdated(): void{
     console.log('work-order.component onWoUpdated');
-    this.getWorkOrders(1);
+    this.getWorkOrders();
+  }
+
+  onBackFromDetail(el: string):void{
+    console.log('back from detail');
+    //this.viewDetail = false;
+    window.scrollTo(0,0);
   }
 
   filter(statusFilter: number): void{
@@ -61,5 +78,7 @@ export class WorkOrdersComponent implements OnInit {
     this.getWorkOrders()
 
   }
+
+
 
 }

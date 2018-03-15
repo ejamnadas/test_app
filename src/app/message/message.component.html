@@ -7,8 +7,7 @@
 </div>
 
 -->
-<div *ngFor="let msg of messageService.messages" class="alert alert-success text-center">
-  {{msg}}
-  <button class="clear" (click)="messageService.clear()">Clear</button>
+<div *ngFor="let msg of messageService.messages" class="text-center log-message" id="hideMe">
+  <small>{{msg}}</small>
+  <div (click)="messageService.clear()">&#10006;</div>
 </div>
-k

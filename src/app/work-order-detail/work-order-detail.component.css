@@ -5,3 +5,9 @@
 .radio-inline.padding{
   padding: 10px;
 }
+
+.content-border > div{
+  border: 1px solid grey;
+  overflow:hidden;
+}
+

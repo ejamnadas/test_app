@@ -1,12 +1,32 @@
-<h1>{{title}}</h1>
+<div class="row">
+<div class="col-md-6">
+<h5>{{title}}</h5>
+</div>
+<div class="col-md-6">
+
+  <nav>
+    <ng-template [ngIf]="!tenantAuthService.isLoggedOut()">
+    <a class="success">Property: {{tenantAuthService.getCompany()}}</a>
+    <a style="color: blue;" (click)="tenantAuthService.logout()">Switch</a>
+    </ng-template>
+  </nav>
+</div>
+</div>
 <nav>
-  <a routerLink="/work-order-list" routerLinkActive="active">Work Orders</a>
-  <a routerLink="/work-order-create" routerLinkActive="active">Create</a>
-  <a routerLink="/admin" routerLinkActive="active">Admin</a>
+  <ng-template [ngIf]="authService.isAuthenticated()">
+    <a routerLink="/work-order-list" routerLinkActive="active">Work Orders</a>
+    <a routerLink="/work-order-create" routerLinkActive="active">Create</a>
+    <a routerLink="/admin" routerLinkActive="active">Admin</a>
+  </ng-template>
+  <ng-template [ngIf]="!authService.isAuthenticated() && !tenantAuthService.isLoggedOut()">
+    <a routerLink="/signup" routerLinkActive="active">Register</a>
+    <a routerLink="/signin" routerLinkActive="active">Login</a>
+  </ng-template>
+    <a style="cursor: pointer;" (click)="authService.logOut()" *ngIf="authService.isAuthenticated()">Logout</a>
 </nav>
 <div class="container">
   <div class="col-md-12">
     <app-message></app-message>
     <router-outlet></router-outlet>
   </div>
-<div>
+</div>

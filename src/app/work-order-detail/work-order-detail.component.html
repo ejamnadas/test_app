@@ -1,24 +1,23 @@
 
 <div *ngIf="workOrder">
-  <div class="row">
-    <div class="col-md-2"><p>{{workOrder.locationUnit.unitType}} {{workOrder.locationUnit.unitDescription}}</p></div>
-    <div class="col-md-8"><h3>{{workOrder.title}}</h3></div>
-    <div class="col-md-2"><label>Priority</label>{{workOrder.workOrderPriority.description}}</div>
+  <button class="small" (click)="onBackFromDetail()">Back to List</button>
+  <div class="row content-border">
+    <div class="col-md-2"><label><h6>{{workOrder.locationUnit.unitType}}</h6></label>{{workOrder.locationUnit.unitDescription}}</div>
+    <div class="col-md-8"><label><h6>Job</h6></label><h5>{{workOrder.title}}</h5></div>
+    <div class="col-md-2"><label><h6>Priority</h6></label>{{workOrder.workOrderPriority.description}}</div>
   </div>
-  <div class="row">
-    <div class="col-md-6"><h1>Image Here</h1></div>
-    <div class="col-md-6"><label>Description</label><p>{{workOrder.description}}</p></div>
+  <div class="row content-border">
+    <div class="col-md-6"></div>
+    <div class="col-md-6"><label><h6>Description</h6></label><p>{{workOrder.description}}</p></div>
   </div>
-  <div class="row">
+  <div class="row content-border">
     <div class="col-md-12">
-      <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" novalidate>
-         <br/>
+      <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" novalidate class="form-horizontal">
            <div class="form-group">
-            <h3>Status</h3>
+            <label><h6>Status</h6></label>
             <label *ngFor="let status of workOrderStatusList" class="radio-inline padding">
               <input (change)="statusChange()" type="radio" formControlName="workOrderStatus" class="form-control" value="{{status.description}}"
                 [attr.disabled]="disabledStatus(status.description)">
-
               {{status.description}}
             </label>
               <!-- <input type="radio" formControlName="workOrderStatus" class="form-control" ng-value="1">
@@ -26,9 +25,12 @@
               <input type="radio" formControlName="workOrderStatus" class="form-control" value="4">
             -->
           </div>
+          <hr>
           <div *ngIf="workOrderForm.get('workOrderStatus').value == 'COMPLETE'" class="form-group">
-            <label>Complete Date</label>
-            <input type="date" formControlName="completedDate" class="form-control">
+            <label class="control-label col-sm-2"><h6>Complete Date</h6></label>
+            <div class="col-sm-10">
+              <input type="date" formControlName="completedDate" class="form-control">
+            </div>
           </div>
           <div *ngIf="completedDate.invalid && (completedDate.dirty || completedDate.touched)"
             class="alert alert-danger" >
@@ -36,22 +38,16 @@
               Complete date required.
             </div>
           </div>
-          <div class="form-row">
-          <div class="col">
-            <label>Assigned By</label><p>{{workOrder.assignedBy.firstName}}</p>
+          <hr>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <label><h6>Progress Log</h6></label>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" value="add note" (click)="addWorkOrderNote()">Add Note </button>
+            </div>
           </div>
-          <div class="col">
-            <label>Assigned To</label>
-            <p>{{workOrder.assignedTo.firstName}}</p>
-          </div>
-          <div class="col">
-            <label>Created Date</label><p>{{workOrder.createdDate}}</p>
-          </div>
-          <div class="col">
-            <label>Due Date</label><p>{{workOrder.dueDate}}</p>
-          </div>
-        </div>
-          <label>Work Order Updates / Notes</label>
            <div formArrayName="workOrderNotes" class="well well-lg">
               <div *ngFor="let not of workOrderNotes.controls; let i=index" [formGroupName]="i" >
                 {{i + 1}}
@@ -60,15 +56,31 @@
               </div>
           </div>
            <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Save</button>
-           <button type="button" value="add note" (click)="addWorkOrderNote()">Add Note </button>
+           
        </form>
+       <div class="form-row content-border small">
+        <div class="col"> <label>Assigned By</label><p>{{workOrder.assignedBy.firstName}}</p>
+        </div>
+        <div class="col">
+          <label>Assigned To</label>
+          <p>{{workOrder.assignedTo.firstName}}</p>
+        </div>
+        <div class="col">
+          <label>Created Date</label><p>{{workOrder.createdDate}}</p>
+        </div>
+        <div class="col">
+          <label>Due Date</label><p>{{workOrder.dueDate}}</p>
+        </div>
+      </div>
        <div>
        </div>
      <div>
+       <!--
        <p>Form value: {{workOrderForm.value | json}}</p>
        <p>Form Status: {{workOrderForm.status | json }}</p>
        <p>Form : {{workOrderForm.valid | json }}</p>
        <p>W/o Status start: {{workOrderStatusOriginal}}</p>
+     -->
 
      </div>
     </div>

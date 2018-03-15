@@ -1,5 +1,5 @@
 export class WorkOrderStatus {
-  id : number;
-  description: string;
+  public id : number;
+  public description: string;
 
 }
