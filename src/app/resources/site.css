@@ -1,3 +1,13 @@
 .radio-inline.padding{
   padding: 10px;
 }
+
+a.active{
+  background: grey;
+  border: 1px yellow;
+}
+
+.nav-link{
+  color: black;
+  background: lightgray;
+}

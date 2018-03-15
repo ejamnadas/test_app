@@ -24,6 +24,7 @@ import { TenantAuthService } from './auth/tenant/tenant-auth.service';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { TenantModule } from './auth/tenant/tenant.module';
+import { WorkOrderDetailEditComponent } from './work-order-detail-edit/work-order-detail-edit.component';
 /*
 const appRoutes: Routes = [
   { path: 'work-order-list', component: WorkOrdersComponent},
@@ -51,7 +52,8 @@ var firebaseConfig = {
     WorkOrdersComponent,
     WorkOrderDetailComponent,
     LoginComponent,
-    WorkOrderCreateComponent
+    WorkOrderCreateComponent,
+    WorkOrderDetailEditComponent
   ],
   imports: [
     BrowserModule,
