@@ -1,32 +1,75 @@
 
 <div *ngIf="workOrder">
-  <button class="small" (click)="onBackFromDetail()">Back to List</button>
+  <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()" novalidate class="form-horizontal">
+    <div class="d-flex flex-row content-border">
+        <div class="p-2 mr-auto"><button  type=button class="small btn" (click)="onBackFromDetail()">Back to List</button></div>
+        
+     <!-- <div class="p-2"><button type=button class="small btn btn-warning" (click)="toggleDisabledForm()">Edit</button>
+        </div>-->
+      <div class="p-2">
+          <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Update</button>
+        </div>
+      </div>
   <div class="row content-border">
-    <div class="col-md-2"><label><h6>{{workOrder.locationUnit.unitType}}</h6></label>{{workOrder.locationUnit.unitDescription}}</div>
-    <div class="col-md-8"><label><h6>Job</h6></label><h5>{{workOrder.title}}</h5></div>
-    <div class="col-md-2"><label><h6>Priority</h6></label>{{workOrder.workOrderPriority.description}}</div>
+    <div class="col-md-2"><label><h6>{{workOrder.locationUnit.unitType}}</h6></label>
+        <select formControlName="unitId" class="">
+          <option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</option> 
+        </select>
+     </div>
+
+    <div class="col-md-8">
+      <div class="d-flex flex-column my-flex-container-column">
+        <div class="p-2 my-flex-item">
+          <div class="d-flex flex-row">
+            <div class="p-2 mr-auto my-flex-item"><label><h6>Work Order</h6></label></div>
+            <div class="p-2"><h5><input type="text" formControlName="title" value="{{workOrder.title}}" /></h5></div>
+          </div>
+        </div>
+        <div class="p-2 my-flex-item">
+          <div class="d-flex flex-row">
+            <div class="p-2 mr-auto my-flex-item"><label><h6>Job</h6></label></div>
+            <div class="p-2">
+              <select formControlName="workOrderJob">
+                <option *ngFor="let j of woJobList" [ngValue]="j.id">{{j.woJobName}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label><h6>Priority</h6></label>
+        <select formControlName="workOrderPriority" class="">
+          <option *ngFor="let p of workOrderPriorityList" [ngValue]="p.id">{{p.description}}</option> 
+        </select>
+      </div>
+    </div>
   </div>
   <div class="row content-border">
-    <div class="col-md-6"></div>
-    <div class="col-md-6"><label><h6>Description</h6></label><p>{{workOrder.description}}</p></div>
+    <div class="col-md-12"><label><h6>Description</h6></label>
+        <textarea rows="4" cols="50" matInput formControlName="description" value="{{workOrder.description}}"></textarea>
+    </div>
   </div>
   <div class="row content-border">
     <div class="col-md-12">
-      <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" novalidate class="form-horizontal">
+      
            <div class="form-group">
             <label><h6>Status</h6></label>
             <label *ngFor="let status of workOrderStatusList" class="radio-inline padding">
-              <input (change)="statusChange()" type="radio" formControlName="workOrderStatus" class="form-control" value="{{status.description}}"
+              <!-- <input (change)="statusChange()" type="radio" formControlName="workOrderStatus" class="form-control" -->
+              <input type="radio" formControlName="workOrderStatus" class="form-control" 
+                  value="{{status.description}}"
                 [attr.disabled]="disabledStatus(status.description)">
               {{status.description}}
             </label>
               <!-- <input type="radio" formControlName="workOrderStatus" class="form-control" ng-value="1">
               <input type="radio" formControlName="workOrderStatus" class="form-control" ng-value="2">
-              <input type="radio" formControlName="workOrderStatus" class="form-control" value="4">
+              <input type="radio" formControlName="workOrderStatus" class="form-control" value="5">
             -->
           </div>
           <hr>
-          <div *ngIf="workOrderForm.get('workOrderStatus').value == 'COMPLETE'" class="form-group">
+         <!-- <div *ngIf="workOrderForm.get('workOrderStatus').value == 'COMPLETE'" class="form-group">
             <label class="control-label col-sm-2"><h6>Complete Date</h6></label>
             <div class="col-sm-10">
               <input type="date" formControlName="completedDate" class="form-control">
@@ -37,29 +80,32 @@
             <div *ngIf="completeDate.errors.required">
               Complete date required.
             </div>
+            <hr>
           </div>
-          <hr>
-
-          <div class="row">
-            <div class="col-sm-6">
-              <label><h6>Progress Log</h6></label>
-            </div>
-            <div class="col-sm-6">
-              <button type="button" value="add note" (click)="addWorkOrderNote()">Add Note </button>
-            </div>
-          </div>
-           <div formArrayName="workOrderNotes" class="well well-lg">
-              <div *ngFor="let not of workOrderNotes.controls; let i=index" [formGroupName]="i" >
-                {{i + 1}}
-                <input type="text" formControlName="id" hidden>
-                <input type="text" formControlName="notes">
+        -->
+        <mat-card>
+        <mat-card-title>
+            <div class="form-group d-flex flex-row  small">
+                <div class="p-2 mr-auto">
+                  Notes
+                </div>
+                <div class="p-2">
+                  <input  [(ngModel)]="newNoteInput" class="small" [ngModelOptions]="{standalone:true}">
+                </div>
+                <div class="p-2"> 
+                  <button type="button" class="small btn btn-small" value="add note" (click)="addWorkOrderNote()">Add </button>
+                </div>
               </div>
-          </div>
-           <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Save</button>
-           
-       </form>
+        </mat-card-title>
+        <mat-card-content class="mat-content" [style.overflow]="'auto'" [style.height.px]="'75'">
+           <mat-list dense class="small"  *ngFor="let note of workOrderNotes.value">
+             <mat-list-item>{{note.noteDate | date:'MM/dd'}} {{note.notes}}</mat-list-item>
+           </mat-list>
+        </mat-card-content>
+        </mat-card>
        <div class="form-row content-border small">
-        <div class="col"> <label>Assigned By</label><p>{{workOrder.assignedBy.firstName}}</p>
+        <div class="col"> <label>Assigned By</label>
+          <p>{{workOrder.assignedBy.firstName}}</p>
         </div>
         <div class="col">
           <label>Assigned To</label>
@@ -69,7 +115,8 @@
           <label>Created Date</label><p>{{workOrder.createdDate}}</p>
         </div>
         <div class="col">
-          <label>Due Date</label><p>{{workOrder.dueDate}}</p>
+          <label>Due Date</label>
+          <p><input type="text" formControlName="dueDate" value="{{workOrder.dueDate}}" /></p>
         </div>
       </div>
        <div>
@@ -87,4 +134,5 @@
     <div class="row">
     </div>
   </div>
+  </form>
 </div>

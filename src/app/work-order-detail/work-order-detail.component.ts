@@ -6,6 +6,13 @@ import { WorkOrderService } from '../work-order.service';
 import { WorkOrderStatus } from '../entities/WorkOrderStatus';
 
 import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import { WorkOrderPriority } from '../entities/WorkOrderPriority';
+import { ControlValueAccessor } from '@angular/forms/src/directives/control_value_accessor';
+import { LocationUnit } from '../entities/LocationUnit';
+import { WorkOrderJob } from '../entities/WorkOrderJob';
+import { RUser } from '../entities/RUser';
+import { DatePipe } from '@angular/common/src/pipes';
+import { MatList, MatListItem, MatCard, MatCardContent } from '@angular/material';
 
 @Component({
   selector: 'app-work-order-detail',
@@ -14,8 +21,15 @@ import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angu
 })
 export class WorkOrderDetailComponent implements OnInit {
 
+  workOrderStatusList: WorkOrderStatus[];
+  workOrderPriorityList: WorkOrderPriority[];
+  locationUnits: LocationUnit[];
+  woJobList: WorkOrderJob[];
+  assignedTos: RUser[];
+
+  newNoteInput: string;
+  
   @Input() workOrder: RWorkOrder;
-  @Input() workOrderStatusList: WorkOrderStatus[];
   @Output() onWoUpdated = new EventEmitter<boolean>();
   @Output() onBackFromDtl = new EventEmitter<boolean>();
 
@@ -27,6 +41,10 @@ export class WorkOrderDetailComponent implements OnInit {
   woStatusOrig: number;
   componentName: string;
 
+  disabledForm: string
+
+  priorityIds: number[] = [1,2, 3];
+  items: any[] = [];
   getWorkOrderStatusList(): void{
 
     this.workOrderService.getWorkOrderStatusTypes()
@@ -45,23 +63,55 @@ export class WorkOrderDetailComponent implements OnInit {
   createForm(): void{
     this.workOrderForm = this.fb.group({
       workOrderStatus: ['', Validators.required],
-      completedDate: '',
-      workOrderNotes : this.fb.array([])
+      completedDate: ['', null],
+      workOrderPriority: ['', Validators.required],
+      workOrderNotes : this.fb.array([]),
+      dueDate: ['', Validators.required],
+      title: ['', Validators.required],
+      workOrderJob: ['', Validators.required],
+      unitId: ['', Validators.required],
+      description: ['', Validators.required]
     });
-
   }
 
   resetForm(): void {
+    this.workOrderService.getWoDropdowns()
+      .subscribe(
+        data=>{
+          this.workOrderPriorityList = data[0],
+          this.locationUnits = data[1],
+          this.workOrderStatusList = data[2],
+          this.woJobList = data[3].woJobList,
+          this.assignedTos = data[4]
+          console.log('combined results:' + JSON.stringify(data))
+        },
+        err=>{
+          console.log('error getting lists');
+        }
+      ); 
     if(this.workOrder){
-    console.log('method: resetForm');
-    console.log(this.workOrder);
+   // console.log(this.workOrder);
     if (this.workOrder){
       this.workOrderForm.reset ({
         workOrderStatus: this.workOrder.workOrderStatus.description,
-        completedDate: this.workOrder.completedDate
+        completedDate: this.workOrder.completedDate,
+        workOrderPriority: this.workOrder.workOrderPriority.id,
+        workOrderJob: this.workOrder.workOrderJob.id  ,
+        dueDate: this.workOrder.dueDate,
+        description: this.workOrder.description,
+        title: this.workOrder.title,
+        unitId: this.workOrder.locationUnit.id
       });
 
+     console.log('work order unit id:' + JSON.stringify(this.workOrder.workOrderPriority)); 
+     console.log('wo priority list: ' + JSON.stringify(this.workOrderPriorityList));
+     console.log(JSON.stringify(this.workOrder));
+     // this.workOrderForm.controls['workOrderPriority'].
+      //  setValue(2, {onlySelf: true});
       this.setNotes(this.workOrder.workOrderNotes);
+      //this.disableFormContols(true);
+      //this.workOrderForm.controls['dueDate'].disable();
+      //this.workOrderForm.disable();
       //this.workOrderForm.controls['workOrderStatus'].disable();
     }
 
@@ -79,19 +129,21 @@ export class WorkOrderDetailComponent implements OnInit {
   }
 
   addWorkOrderNote(){
-    let note = new WorkOrderNote(null, '');
-    this.workOrderNotes.push(this.fb.group({
-      id:[note.id],
-      notes:[note.notes, Validators.required]
-    }));
+    console.log('note added:' + this.newNoteInput);
+    let note = new WorkOrderNote(null, this.newNoteInput, null)
+    this.workOrder.workOrderNotes.unshift(note);
+   // this.workOrder.workOrderNotes.push(note);
+
+    console.log('updated notes: ' + JSON.stringify(this.workOrder.workOrderNotes));
+    this.setNotes(this.workOrder.workOrderNotes);
+    
+    //this.workOrderNotes.push(this.fb.group(note));
+    //this.resetForm();
   }
 
-
-
-  statusChange(): void{
-    console.log("status changes");
-    if(this.workOrderForm.get('workOrderStatus').value == 'COMPLETE'){
-      this.workOrderForm.controls['completedDate'].setValidators([Validators.required]);
+statusChange(): void{ 
+      console.log("status changes");
+    /*if(this.workOrderForm.get('workOrderStatus').value == 'COMPLETE'){ this.workOrderForm.controls['completedDate'].setValidators([Validators.required]);
       this.workOrderForm.controls['completedDate'].updateValueAndValidity();
     }else{
       this.workOrderForm.controls['completedDate'].clearValidators();
@@ -106,12 +158,43 @@ export class WorkOrderDetailComponent implements OnInit {
       //this.workOrderForm.controls['workOrderNotes'].setValidators([Validators.required]);
       //this.workOrderForm.controls['workOrderNotes'].updateValueAndValidity();
 
-    }
+    }*/
   }
 
   onBackFromDetail(el: string):void{
 
     this.onBackFromDtl.emit(true);
+  }
+
+  toggleDisabledForm():void{
+    let boolStatus: boolean;
+    console.log("pre toggle disabled" + this.disabledForm);
+    if(this.disabledForm == null){
+      boolStatus  = true;
+      this.disabledForm  = "true";
+    }else{
+      this.disabledForm = null;
+      boolStatus = false;
+    }
+    this.disableFormContols(boolStatus);
+    console.log("toggle disabled" + this.disabledForm);
+  }
+
+  disableFormContols(val: boolean){
+    if(val){
+       this.workOrderForm.disable();
+       //this.workOrderForm.controls['workOrderStatus'].enable(); 
+       this.workOrderForm.controls['dueDate'].enable(); 
+    }else{
+      this.workOrderForm.enable();
+
+    }
+    this.statusChange();
+  }
+  
+  getDisabledForm():String{
+    return this.disabledForm;
+    //return null;
   }
 
   onSubmit():void{
@@ -121,7 +204,17 @@ export class WorkOrderDetailComponent implements OnInit {
     this.workOrderService.updateWorkOrder(this.workOrderMod)
       //.subscribe(wo => console.log(wo.id));
       .subscribe(wo =>
-         this.woUpdated(true));
+        {
+          console.log('test');
+          console.log('updated wo: ' + JSON.stringify(wo));
+          this.workOrder = wo;
+          this.woUpdated(true);
+
+        },
+      err=>{
+        console.log('update wo error');
+      });
+        ;
     //this.woUpdated(true);
   }
 
@@ -155,13 +248,20 @@ export class WorkOrderDetailComponent implements OnInit {
       wo.workOrderStatusId = this.workOrderStatusId;
       wo.completedDate =  formModel.completedDate;
       wo.workOrderNotes = formModel.workOrderNotes;
+      wo.unitId = formModel.unitId;
+      wo.jobId = formModel.workOrderJob;
+      wo.workOrderPriorityId = formModel.workOrderPriority;
+      wo.title = formModel.title;
+      wo.description = formModel.description;
 
+      console.log('presave workorder:: ' + JSON.stringify(wo));
       const saveWorkOrder: WorkOrder = wo;
       return saveWorkOrder;
   }
 
   woUpdated(updated: boolean) {
     this.onWoUpdated.emit(true);
+    this.resetForm();
   }
 
 
@@ -169,8 +269,10 @@ export class WorkOrderDetailComponent implements OnInit {
 
   get workOrderStatus() { return this.workOrderForm.get('workOrderStatus'); }
 
+  get workOrderPriority() { return this.workOrderForm.get('workOrderPriority'); }
+ 
 
-  disabledStatus(status: String) : String{
+ disabledStatus(status: String) : String{
     //console.log(status);
     let result : String;
     let stateDescription : String =
@@ -178,7 +280,7 @@ export class WorkOrderDetailComponent implements OnInit {
 
     switch(status){
       case 'NEW': {
-        if(stateDescription == 'COMPLETE' || stateDescription == 'IN-PROGRESS'){
+          if(stateDescription == 'COMPLETE' || stateDescription == 'IN-PROGRESS'){
           result = 'disabled'
         }else{
           result = null;
@@ -212,14 +314,17 @@ export class WorkOrderDetailComponent implements OnInit {
     this.componentName = 'work-order-detail';
     console.log('work-order')
     this.createForm();
+  
   }
 
   ngOnInit() {
 
+ 
   }
 
   ngOnChanges(){
     console.log('ngOneChanges');
+    this.disabledForm = "true";
     this.resetForm();
   }
 }

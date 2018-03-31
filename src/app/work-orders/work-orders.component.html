@@ -1,43 +1,44 @@
 <h2>Work Orders</h2>
   <div class="row">
   <div class="col-md-6" #wolist>
-      <ul class="nav small">
-        <li [class.selected]="statusFilter==1" class="list-group-item" (click)="filter('1')">NEW</li>
-        <li [class.selected]="statusFilter==2"  class="list-group-item" (click)="filter('2')">IN-PROGRESS</li>
-        <li [class.selected]="statusFilter==4"  class="list-group-item" (click)="filter('4')">COMPLETED</li>
-      </ul>
+      <!--<ul class="nav small">
+        <li [class.selected]="statusFilter==1" class="list-group-item tab" (click)="filter('1')">NEW</li>
+        <li [class.selected]="statusFilter==2"  class="list-group-item tab" (click)="filter('2')">IN-PROGRESS</li>
+        <li [class.selected]="statusFilter==4"  class="list-group-item tab" (click)="filter('4')">COMPLETED</li>
+      </ul>-->
+      <div class="d-flex justify-content-end">
+        <div class="form-group form-inline hotel-user-input small">
+          <mat-checkbox class="form-control" [align]=start [(ngModel)]="completedOnly" (change)="filter()">See Completed Only</mat-checkbox>
+        </div>
+      </div>
       <div class="row sticky-top table-header">
-        <div class="col-md-6 border-header">Work Order</div>
+        <div class="col-md-3 border-header">Job</div>
+        <div class="col-md-5 border-header">Description</div>
         <div class="col-md-2 border-header">Person</div>
-        <div class="col-md-2 border-header">Due</div>
-        <div class="col-md-2 border-header">Priority</div>
+        <div class="col-md-2 border-header">Due Date</div>
       </div>
       <div class="tablecontent">
 
         <div *ngFor="let workOrder of workOrders"
           [class.selected]="workOrder === selectedWorkOrder"
+          [class.completed]="workOrder.workOrderStatus.description == 'COMPLETED'"
           (click)="onSelect(workOrder, detail)" class="container alternate limit-length row-content small" >
-          <div class="row row-underline">
+          <div class="row ">
             <!--<div class="col-md-6">{{workOrder.title}}</div>-->
-            <div class="col-md-6 border-detail">{{workOrder.workOrderJob.woJobName}}</div>
+            <div class="col-md-3 border-detail">{{workOrder.workOrderJob.woJobName}}</div>
+            <div class="col-md-5 border-detail limit-length">{{workOrder.description}}</div>
             <div class="col-md-2 border-detail"><p *ngIf="workOrder.assignedTo">{{workOrder.assignedTo.firstName}}</p></div>
-            <div class="col-md-2 border-detail">{{workOrder.dueDate | date:'shortDate'}}</div>
-            <div class="col-md-2 border-detail">{{workOrder.workOrderPriority.description}}</div>
+            <div class="col-md-2 border-detail">{{workOrder.dueDate | date:'MM/dd'}}</div>
+            <!--<div class="col-md-2 border-detail">{{workOrder.workOrderPriority.description}}</div>-->
             <!-- <div class="col-md-1">{{workOrder.dueDate}}</div>
             <div class="col-md-1">{{workOrder.workOrderPriority.description}}</div>
           -->
-          </div>
-          <div class="row">
-            <div class="col-md-8">
-              <p class="limit-length">{{workOrder.description}}</p>
-            </div>
           </div>
         </div>
     </div>
     </div>
   <div class="col-md-6" #detail>
    <app-work-order-detail [workOrder]="selectedWorkOrder"
-    [workOrderStatusList]="workOrderStatusList"
     (onWoUpdated)="onWoUpdated($event)"
     (onBackFromDtl)="onBackFromDetail($event)" ></app-work-order-detail>
   </div>

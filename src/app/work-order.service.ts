@@ -16,6 +16,8 @@ import { REST_URL } from './config/api_settings';
 import { MessageService } from './message.service';
 import { TenantAuthService } from './auth/tenant/tenant-auth.service';
 import { CreateWorkOrderModel } from './entities/CreateWorkOrderModel';
+import { Location } from '@angular/common';
+import { WorkOrderJob } from './entities/WorkOrderJob';
 
 @Injectable()
 export class WorkOrderService {
@@ -50,15 +52,15 @@ export class WorkOrderService {
       tap((workOrder: WorkOrder) => this.log(`added work order id=${workOrder.id}`)),
       catchError(this.handleError<WorkOrder>('addWorkOrder'))
     );
-
   }
 
-  updateWorkOrder(workOrder: WorkOrder): Observable<WorkOrder>{
+  updateWorkOrder(workOrder: WorkOrder): Observable<any>{
     return this.http.post( REST_URL + 'work_order_service/update', workOrder, this.tenantAuthService.httpOptions ).pipe(
       tap((workOrder: WorkOrder) => this.log(`updated work order id=${workOrder.id}`)),
       catchError(this.handleError<WorkOrder>('updateWorkOrder'))
     );
   }
+ 
 
   getWorkOrders(departmentId: number): Observable<any>{
     console.log('getWorkOrders');
@@ -78,6 +80,105 @@ export class WorkOrderService {
     );
 
   }
+
+
+  getWorkOrderPriorityList():Observable<WorkOrderPriority[]>{
+    return this.http.get<WorkOrderPriority[]>( REST_URL + 'work_order_service/getWorkOrderPriorities', this.tenantAuthService.httpOptions ).pipe(
+      tap(workOrderPriorities => console.log('fetched work order priority list' + JSON.stringify(workOrderPriorities))),
+      catchError(this.handleError<WorkOrderPriority[]>('getWorkOrdersPriorities'))
+    );
+  }
+  
+  private woPrList: WorkOrderPriority[];
+  private woStatusTypeList: WorkOrderStatus[];
+  private locationUnits: LocationUnit[];
+  private woJobList: WorkOrderJob[];
+  private assignedToList: RUser[];
+  private createWoModel: CreateWorkOrderModel[];
+
+  private obsWoPrList: Observable<WorkOrderPriority[]>;
+  private obsWoStatusList: Observable<WorkOrderStatus[]>;
+  private obsLocationUnits: Observable<LocationUnit[]>;
+  private obsWoJobList: Observable<WorkOrderJob[]>;
+  private obsUsers: Observable<RUser[]>;
+  private obsCreateWoModel: Observable<CreateWorkOrderModel[]>;
+
+
+  getWoPrList(){
+    if(this.woPrList){
+      console.log('woprlist exists, no get');
+      return Observable.of(this.woPrList);
+    }else if(this.obsWoPrList){
+      return this.obsWoPrList;
+    }else{
+      console.log('woprlist doesnt exist');
+      this.obsWoPrList = this.http.get<WorkOrderPriority[]>(
+         REST_URL + 'work_order_service/getWorkOrderPriorities',
+         this.tenantAuthService.httpOptions ).pipe(
+           tap(workOrderPriorities=>{
+             this.woPrList = workOrderPriorities
+           }),
+          catchError(this.handleError<WorkOrderPriority[]>('getWorkOrdersPriorities'))
+         ).share();
+        return this.obsWoPrList;
+    }
+  }
+
+  getWoStatusList(){
+    if(this.woStatusTypeList){
+      return Observable.of(this.woStatusTypeList);
+    }else if(this.obsWoStatusList){
+      return this.obsWoStatusList;
+    }else{
+      this.obsWoStatusList = this.http.get<WorkOrderStatus[]>(
+         REST_URL + 'work_order_service/getWorkOrderStatuses',
+         this.tenantAuthService.httpOptions ).pipe(
+           tap(results=>{
+             this.woStatusTypeList = results 
+           }),
+          catchError(this.handleError<WorkOrderStatus[]>('getWorkOrdersStatus'))
+         ).share();
+        return this.obsWoStatusList;
+    }
+  }
+
+  getLocationUnitList(){
+    if(this.locationUnits){
+      return Observable.of(this.locationUnits);
+    }else if(this.obsLocationUnits){
+      return this.obsLocationUnits;
+    }else{
+      this.obsLocationUnits = this.http.get<LocationUnit[]>(
+         REST_URL + 'work_order_service/getLocationUnit',
+         this.tenantAuthService.httpOptions ).pipe(
+           tap(results=>{
+             this.locationUnits = results 
+           }),
+          catchError(this.handleError<LocationUnit[]>('getWorkOrdersStatus'))
+         ).share();
+        return this.obsLocationUnits;
+    }
+  }
+
+  getCreateWorkOrderModel(){
+    if(this.createWoModel){
+      return Observable.of(this.createWoModel);
+    }else if(this.obsCreateWoModel){
+      return this.obsCreateWoModel;
+    }else{
+      this.obsCreateWoModel = this.http.get<CreateWorkOrderModel[]>(
+         REST_URL + 'work_order_service/getCreateWorkOrderDropdown',
+         this.tenantAuthService.httpOptions ).pipe(
+           tap(results=>{
+             this.createWoModel = results 
+           }),
+          catchError(this.handleError<CreateWorkOrderModel[]>('getWorkOrdersStatus'))
+         ).share();
+        return this.obsCreateWoModel;
+    }
+  }
+  
+
   getWorkOrderStatusTypes():Observable<WorkOrderStatus[]>{
     return this.http.get<WorkOrderStatus[]>(REST_URL + 'work_order_service/getWorkOrderStatuses', this.tenantAuthService.httpOptions ).pipe(
       retry(3),
@@ -86,11 +187,15 @@ export class WorkOrderService {
     );
   }
 
-  getWorkOrderPriorityList():Observable<WorkOrderPriority[]>{
-    return this.http.get<WorkOrderPriority[]>( REST_URL + 'work_order_service/getWorkOrderPriorities', this.tenantAuthService.httpOptions ).pipe(
-      tap(workOrderPriorities => console.log('fetched work order priority list' + JSON.stringify(workOrderPriorities))),
-      catchError(this.handleError<WorkOrderPriority[]>('getWorkOrdersPriorities'))
-    );
+  getWoDropdowns():Observable<Object>{
+    return Observable.forkJoin(
+      this.getWoPrList(),
+      this.getLocationUnitList(),
+      this.getWoStatusList(),
+      this.getCreateWorkOrderModel(),
+      this.http.get<RUser[]>(REST_URL + 'work_order_service/getUsers', this.tenantAuthService.httpOptions)
+    )
+    .catch(this.handleError('getCreateWoLists error'));
   }
 
   getUserList():Observable<RUser[]>{
@@ -130,8 +235,6 @@ export class WorkOrderService {
       this.http.get<Department[]>(REST_URL + 'work_order_service/getDepartments', this.tenantAuthService.httpOptions),
       this.http.get<RUser[]>(REST_URL + 'work_order_service/getUsers', this.tenantAuthService.httpOptions),
       this.http.get<CreateWorkOrderModel[]>(REST_URL + 'work_order_service/getCreateWorkOrderDropdown', this.tenantAuthService.httpOptions),
-
-
     )
     .catch(this.handleError('getCreateWoLists error'));
 

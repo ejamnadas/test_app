@@ -3,6 +3,12 @@ import { WorkOrderService } from '../work-order.service';
 import { RWorkOrder } from '../entities/RWorkOrder';
 import { WorkOrderStatus } from '../entities/WorkOrderStatus';
 import { Element } from '@angular/compiler';
+import { Department } from '../entities/Department';
+import { RUser } from '../entities/RUser';
+import { WorkOrderCategory } from '../entities/WorkOrderCategory';
+import { LocationUnit } from '../entities/LocationUnit';
+import { WorkOrderJob } from '../entities/WorkOrderJob';
+import { WorkOrderPriority } from '../entities/WorkOrderPriority';
 
 @Component({
   selector: 'app-work-orders',
@@ -18,19 +24,56 @@ export class WorkOrdersComponent implements OnInit {
   statusFilter: number;
   deptFilter: number
   viewDetail: boolean;
+  completedOnly: boolean = false;
+  
+  taskDepartments: Department[];
+  assignedTos: RUser[];
+  workOrderCategories: WorkOrderCategory[];
+  locationUnits: LocationUnit[];
+  assets: Asset[];
+  woJobList: WorkOrderJob[];
+  workOrderPriorityList: WorkOrderPriority[];
 
+
+  getFormLists(): void{
+    console.log('getFormLists');
+    
+    this.workOrderService.getCreateWoLists()
+      .subscribe(
+        data=>{
+          this.locationUnits = data[0],
+          this.workOrderCategories = data[1],
+          this.workOrderPriorityList = data[2],
+          this.taskDepartments = data[3],
+          this.assignedTos = data[4],
+          this.woJobList = data[5].woJobList,
+          console.log('combined re:' + JSON.stringify(data))
+        },
+        err=>{
+          console.log('error getting lists');
+        }
+      );
+  }
   getWorkOrders(): void {
-    this.workOrderService.getWorkOrdersByStatus(this.deptFilter,this.statusFilter)
+    if(this.completedOnly){
+      this.statusFilter = 4;  
+      this.workOrderService.getWorkOrdersByStatus(this.deptFilter,this.statusFilter)
       .subscribe(workOrders => { 
         this.workOrders = workOrders
       },
        error => {
          console.log('error getWorkOrders');
        });
-       this.testVal = this.testVal  + 1;
-       console.log('get work orders');
-       console.log(this.workOrders);
-       console.log(this.testVal);
+    }else{
+      this.workOrderService.getWorkOrders(this.deptFilter)
+      .subscribe(workOrders => { 
+        this.workOrders = workOrders
+      },
+       error => {
+         console.log('error getWorkOrders');
+       });
+    }
+     console.log(this.workOrders);
   }
 
   onSelect(workOrder: RWorkOrder, el): void{
@@ -48,9 +91,11 @@ export class WorkOrdersComponent implements OnInit {
     this.testVal = 0;
     this.statusFilter = 1;
     this.deptFilter = 0;
+    this.getFormLists();
     this.getWorkOrders();
 
     this.getWorkOrderStatusList();
+    
     this.viewDetail = false;
   }
 
@@ -72,13 +117,18 @@ export class WorkOrdersComponent implements OnInit {
     window.scrollTo(0,0);
   }
 
-  filter(statusFilter: number): void{
+  filter(): void{
+    console.log('filter wos');
+    this.getWorkOrders()
+
+  }
+/*  filter(statusFilter: number): void{
     console.log('filter esults' + statusFilter);
     this.statusFilter = statusFilter;
     this.getWorkOrders()
 
   }
-
+*/
 
 
 }

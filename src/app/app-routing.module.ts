@@ -7,10 +7,12 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './auth-guard.service';
 import { LoginComponent } from './auth/tenant/login/login.component';
+import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component';
 
 const appRoutes: Routes = [
   { path: 'work-order-list', 
-    component: WorkOrdersComponent,
+    //component: WorkOrdersComponent,
+    component: WorkOrdersTblComponent,
     canActivate: [AuthGuard]
   },
   { 
@@ -21,9 +23,15 @@ const appRoutes: Routes = [
   { path: 'site-login',
     component: LoginComponent
   },
+  { path: '',
+    redirectTo: '/work-order-list' ,
+    pathMatch: 'full'
+
+  },
   { path: '**', component: PageNotFoundComponent,
     canActivate:[AuthGuard] 
-  }
+  },
+  
 
 ];
 

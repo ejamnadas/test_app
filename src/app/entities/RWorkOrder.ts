@@ -3,6 +3,7 @@ import { LocationUnit } from './LocationUnit';
 import { WorkOrderStatus } from './WorkOrderStatus';
 import { WorkOrderNote } from './WorkOrderNote';
 import { WorkOrderJob } from './WorkOrderJob';
+import { WorkOrderPriority } from './WorkOrderPriority';
 
 export class RWorkOrder{
 
@@ -17,7 +18,7 @@ export class RWorkOrder{
   orgUnit: number;
   dueDate: string;
   completedDate: string;
-  workOrderPriorityId: number;
+  workOrderPriority: WorkOrderPriority;
   locationUnit: LocationUnit;
 //  workOrderStatusId: number;
   workOrderStatus: WorkOrderStatus;

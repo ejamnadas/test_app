@@ -11,3 +11,16 @@
   overflow:hidden;
 }
 
+.my-flex-item{
+  padding: 0rem !important;
+}
+
+.mat-content{
+  background: rgb(235, 235, 235);
+}
+
+input.small{
+  padding: 1px;
+  
+  font-size: 80%;
+}

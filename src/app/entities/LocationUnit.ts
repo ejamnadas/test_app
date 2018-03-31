@@ -1,5 +1,5 @@
 export class LocationUnit{
-    unitId : number;
+    id : number;
     unitType: string;
     unitDescription: string;
 }
