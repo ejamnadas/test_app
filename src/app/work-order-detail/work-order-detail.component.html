@@ -47,8 +47,12 @@
     </div>
   </div>
   <div class="row content-border">
-    <div class="col-md-12"><label><h6>Description</h6></label>
-        <textarea rows="4" cols="50" matInput formControlName="description" value="{{workOrder.description}}"></textarea>
+    <div class="col-md-12">
+       <mat-form-field class="max-size">
+         <textarea matInput placeholder="Description" formControlName="description" 
+                value="{{workOrder.description}}"  matTextareaAutosize matAutosizeMinRows="2"
+                matAutosizeMaxRows="4"></textarea>
+       </mat-form-field>
     </div>
   </div>
   <div class="row content-border">

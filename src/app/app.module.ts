@@ -26,7 +26,8 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { TenantModule } from './auth/tenant/tenant.module';
 import { WorkOrderDetailEditComponent } from './work-order-detail-edit/work-order-detail-edit.component';
 import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPaginator, MatPaginatorModule, MatListModule, MatCardModule,
-  MatFormFieldModule } from '@angular/material';
+  MatFormFieldModule, 
+  MatInputModule} from '@angular/material';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 /*
@@ -71,6 +72,7 @@ var firebaseConfig = {
     AppRoutingModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
+    MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
     MatTableModule,

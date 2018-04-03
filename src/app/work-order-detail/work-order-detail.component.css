@@ -24,3 +24,7 @@ input.small{
   
   font-size: 80%;
 }
+
+.max-size{
+  display: inherit;
+}
