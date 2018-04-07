@@ -12,7 +12,7 @@ import { LocationUnit } from '../entities/LocationUnit';
 import { WorkOrderJob } from '../entities/WorkOrderJob';
 import { RUser } from '../entities/RUser';
 import { DatePipe } from '@angular/common/src/pipes';
-import { MatList, MatListItem, MatCard, MatCardContent } from '@angular/material';
+import { MatList, MatListItem, MatCard, MatCardContent, MatSelect, MatOption, MatOptgroup } from '@angular/material';
 
 @Component({
   selector: 'app-work-order-detail',
@@ -93,7 +93,8 @@ export class WorkOrderDetailComponent implements OnInit {
    // console.log(this.workOrder);
     if (this.workOrder){
       this.workOrderForm.reset ({
-        workOrderStatus: this.workOrder.workOrderStatus.description,
+        //workOrderStatus: this.workOrder.workOrderStatus.description,
+        workOrderStatus: this.workOrder.workOrderStatus.id,
         completedDate: this.workOrder.completedDate,
         workOrderPriority: this.workOrder.workOrderPriority.id,
         workOrderJob: this.workOrder.workOrderJob.id  ,
@@ -132,16 +133,19 @@ export class WorkOrderDetailComponent implements OnInit {
     console.log('note added:' + this.newNoteInput);
     let note = new WorkOrderNote(null, this.newNoteInput, null)
     this.workOrder.workOrderNotes.unshift(note);
-   // this.workOrder.workOrderNotes.push(note);
-
+    // this.workOrder.workOrderNotes.push(note);
+    
     console.log('updated notes: ' + JSON.stringify(this.workOrder.workOrderNotes));
     this.setNotes(this.workOrder.workOrderNotes);
-    
-    //this.workOrderNotes.push(this.fb.group(note));
-    //this.resetForm();
+    this.newNoteInput = '';
   }
 
-statusChange(): void{ 
+  onEnterNotes():void{
+    this.addWorkOrderNote();
+
+  }
+
+  statusChange(): void{ 
       console.log("status changes");
     /*if(this.workOrderForm.get('workOrderStatus').value == 'COMPLETE'){ this.workOrderForm.controls['completedDate'].setValidators([Validators.required]);
       this.workOrderForm.controls['completedDate'].updateValueAndValidity();
@@ -246,6 +250,7 @@ statusChange(): void{
       let wo = new WorkOrder();
       wo.id = this.workOrder.id;
       wo.workOrderStatusId = this.workOrderStatusId;
+      wo.workOrderStatusId = formModel.workOrderStatus;
       wo.completedDate =  formModel.completedDate;
       wo.workOrderNotes = formModel.workOrderNotes;
       wo.unitId = formModel.unitId;
@@ -306,6 +311,8 @@ statusChange(): void{
 //    console.log(result);
     return result;
   }
+
+
 
 
 

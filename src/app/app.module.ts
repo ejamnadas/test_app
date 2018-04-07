@@ -27,7 +27,10 @@ import { TenantModule } from './auth/tenant/tenant.module';
 import { WorkOrderDetailEditComponent } from './work-order-detail-edit/work-order-detail-edit.component';
 import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPaginator, MatPaginatorModule, MatListModule, MatCardModule,
   MatFormFieldModule, 
-  MatInputModule} from '@angular/material';
+  MatInputModule,
+  MatSelectModule,
+  MatOptionModule,
+  MatOptgroup} from '@angular/material';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 /*
@@ -80,7 +83,8 @@ var firebaseConfig = {
     MatListModule,
     MatCardModule,
     BrowserAnimationsModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatSelectModule, MatOptionModule
   ],
   providers: [WorkOrderService, MessageService, AuthService, UserService, 
     TenantAuthService],
