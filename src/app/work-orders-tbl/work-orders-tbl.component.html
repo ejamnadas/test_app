@@ -1,0 +1,59 @@
+<div class="row">
+<div class="col-md-6">
+  
+  <div class="d-flex justify-content-end">
+        <div class="form-group form-inline hotel-user-input small">
+          <mat-checkbox class="form-control" [align]=start [(ngModel)]="completedOnly" (change)="filterCompleted()">See Completed Only</mat-checkbox>
+        </div>
+      </div>
+      <mat-form-field>
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+<div class="example-container mat-elevation-z8 ">
+  
+    <mat-table #table [dataSource]="dataSource">
+  
+      <ng-container matColumnDef="locationUnit.unitDescription">
+        <mat-header-cell *matHeaderCellDef> Room </mat-header-cell>
+        <mat-cell  *matCellDef="let element"> {{  element.locationUnit.unitDescription}} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="workOrderJob.woJobName">
+        <mat-header-cell *matHeaderCellDef> Jobs </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.workOrderJob.woJobName}} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+        <mat-cell  *matCellDef="let element"> {{element.description}} </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="assignedTo.firstName">
+        <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
+        <mat-cell  *matCellDef="let element"> {{element.assignedTo.firstName}} </mat-cell>
+      </ng-container>
+
+      <!--<ng-container matColumnDef="dueDate">
+        <mat-header-cell *matHeaderCellDef> Due Date </mat-header-cell>
+        <mat-cell  *matCellDef="let element"> {{  element.dueDate | date:'MM/dd'}} </mat-cell>
+      </ng-container>
+    -->
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row (click)="onSelect(row, detail)" 
+        [ngClass]="{'selected': isSelectedRow(row), 'inprogress': isRowInProgress(row), 'completed': isRowCompleted(row)  }"
+        *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <mat-paginator #paginator
+                   [pageSize]="100"
+                   [pageSizeOptions]="[5, 10, 20]"
+                   [showFirstLastButtons]="true">
+    </mat-paginator>
+</div>
+</div>
+<div class="col-md-6">
+  <app-work-order-detail [workOrder]="selectedWorkOrder"
+    (onWoUpdated)="onWoUpdated($event)"
+    (onBackFromDtl)="onBackFromDetail($event)" ></app-work-order-detail>
+</div>
+</div>

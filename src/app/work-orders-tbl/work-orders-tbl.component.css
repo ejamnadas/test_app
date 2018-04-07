@@ -1,0 +1,17 @@
+.ngTableRow{
+    background: blue;
+}
+
+.selected{
+    font-weight: bold;
+  }
+
+.completed{
+    background-color: rgb(191, 255, 191);
+    border: 1px solid  rgb(141, 141, 0);
+  }
+
+.inprogress{ 
+    background-color:rgb(255, 229, 180);
+    border: 1px solid  rgb(141, 141, 0);
+  }
