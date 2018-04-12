@@ -17,8 +17,10 @@ export class WorkOrdersTblComponent implements OnInit {
   completedOnly: boolean;
   deptFilter: number;
   displayedColumns = [ 'locationUnit.unitDescription', 'workOrderJob.woJobName', 'description', 'assignedTo.firstName' ];
+  isLoading = false;
    // displayedColumns = [ 'description' ];
   dataSource = new MatTableDataSource<RWorkOrder>(this.workOrders);
+  opened: string;
   
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -27,10 +29,14 @@ export class WorkOrdersTblComponent implements OnInit {
   }
 
   getWorkOrders(): void {
+    this.isLoading = true;
+    console.log(this.isLoading);
       this.workOrderService.getWorkOrders(this.deptFilter)
       .subscribe(workOrders => { 
         this.workOrders = workOrders;
         console.log('work orders: ' + JSON.stringify(this.workOrders));
+        this.isLoading = false;
+        console.log(this.isLoading);
       },
        error => {
          console.log('error getWorkOrders');
@@ -76,6 +82,10 @@ export class WorkOrdersTblComponent implements OnInit {
     //console.log('work-order.component onWoUpdated');
     this.getWorkOrders();
   }
+  
+  onBackFromDetail(el: string):void{
+    this.opened = "true";
+  }
 
   filterCompleted():void{
     //console.log('filterCompleted');
@@ -94,11 +104,11 @@ export class WorkOrdersTblComponent implements OnInit {
     console.log('filter vlaue' + filterValue);
     this.dataSource.filter = filterValue;
   }
-
+ 
   ngOnInit() {
     this.deptFilter = 0;
     this.getWorkOrders();
-    
+    this.opened = "true";
     this.dataSource.filterPredicate = (data: RWorkOrder, filter: string) => data.workOrderStatus.description == filter;
   }
 

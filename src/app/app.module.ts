@@ -30,9 +30,13 @@ import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPagina
   MatInputModule,
   MatSelectModule,
   MatOptionModule,
-  MatOptgroup} from '@angular/material';
+  MatOptgroup,
+  MatDrawer,
+  MatDrawerContainer,
+  MatSidenavModule} from '@angular/material';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { WorkOrderTblDrawerComponent } from './work-order-tbl-drawer/work-order-tbl-drawer.component';
 /*
 const appRoutes: Routes = [
   { path: 'work-order-list', component: WorkOrdersComponent},
@@ -62,7 +66,8 @@ var firebaseConfig = {
     LoginComponent,
     WorkOrderCreateComponent,
     WorkOrderDetailEditComponent,
-    WorkOrdersTblComponent
+    WorkOrdersTblComponent,
+    WorkOrderTblDrawerComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +89,7 @@ var firebaseConfig = {
     MatCardModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
-    MatSelectModule, MatOptionModule
+    MatSelectModule, MatOptionModule, MatSidenavModule
   ],
   providers: [WorkOrderService, MessageService, AuthService, UserService, 
     TenantAuthService],

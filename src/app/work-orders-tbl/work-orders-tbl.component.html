@@ -1,17 +1,19 @@
-<div class="row">
-<div class="col-md-6">
-  
-  <div class="d-flex justify-content-end">
-        <div class="form-group form-inline hotel-user-input small">
-          <mat-checkbox class="form-control" [align]=start [(ngModel)]="completedOnly" (change)="filterCompleted()">See Completed Only</mat-checkbox>
+<h3 *ngIf="isLoading">Loading tasks...</h3>
+<mat-sidenav-container *ngIf="!isLoading" class="examle-container-nav">
+  <!--<div class="col-md-6">-->
+  <mat-sidenav class="example-sidenav" mode="side" #sidenav opened [(opened)]="opened" >
+    <div class="d-flex justify-content-end">
+        <div class="form-inline hotel-user-input small">
+          <mat-checkbox class="" [align]=start [(ngModel)]="completedOnly" (change)="filterCompleted()">See Completed Only</mat-checkbox>
         </div>
-      </div>
-      <mat-form-field>
+    </div>
+      <!--<mat-form-field>
           <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-        </mat-form-field>
-<div class="example-container mat-elevation-z8 ">
+        </mat-form-field>-->
+    <div class="example-container mat-elevation-z8 ">
   
-    <mat-table #table [dataSource]="dataSource">
+   
+    <mat-table  #table [dataSource]="dataSource">
   
       <ng-container matColumnDef="locationUnit.unitDescription">
         <mat-header-cell *matHeaderCellDef> Room </mat-header-cell>
@@ -32,14 +34,14 @@
         <mat-header-cell *matHeaderCellDef> Assigned To </mat-header-cell>
         <mat-cell  *matCellDef="let element"> {{element.assignedTo.firstName}} </mat-cell>
       </ng-container>
-
+    
       <!--<ng-container matColumnDef="dueDate">
         <mat-header-cell *matHeaderCellDef> Due Date </mat-header-cell>
         <mat-cell  *matCellDef="let element"> {{  element.dueDate | date:'MM/dd'}} </mat-cell>
       </ng-container>
     -->
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row (click)="onSelect(row, detail)" 
+      <mat-row (click)="onSelect(row, detail); sidenav.toggle();" 
         [ngClass]="{'selected': isSelectedRow(row), 'inprogress': isRowInProgress(row), 'completed': isRowCompleted(row)  }"
         *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
@@ -50,10 +52,13 @@
                    [showFirstLastButtons]="true">
     </mat-paginator>
 </div>
-</div>
-<div class="col-md-6">
+</mat-sidenav>
+<!--</div>-->
+<div class="example-sidenav-content">
+  <div class="col-md-12">
   <app-work-order-detail [workOrder]="selectedWorkOrder"
     (onWoUpdated)="onWoUpdated($event)"
     (onBackFromDtl)="onBackFromDetail($event)" ></app-work-order-detail>
-</div>
-</div>
+  </div>
+  </div>
+  </mat-sidenav-container>

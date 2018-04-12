@@ -8,6 +8,7 @@ import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './auth-guard.service';
 import { LoginComponent } from './auth/tenant/login/login.component';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component';
+import { WorkOrderTblDrawerComponent } from './work-order-tbl-drawer/work-order-tbl-drawer.component';
 
 const appRoutes: Routes = [
   { path: 'work-order-list', 
@@ -28,10 +29,14 @@ const appRoutes: Routes = [
     pathMatch: 'full'
 
   },
+  {
+    path: 'wo-list-drawer',
+    component: WorkOrderTblDrawerComponent
+  },
   { path: '**', component: PageNotFoundComponent,
     canActivate:[AuthGuard] 
-  },
-  
+  }
+
 
 ];
 

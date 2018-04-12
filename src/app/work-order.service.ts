@@ -67,7 +67,7 @@ export class WorkOrderService {
     return this.http.get( REST_URL + 'work_order_service/get/' + departmentId, this.tenantAuthService.httpOptions ).pipe(
       retry(3),
       catchError(this.handleError<RWorkOrder[]>('getWorkOrders'))
-    );
+    )
 
   }
 

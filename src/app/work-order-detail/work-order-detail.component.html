@@ -1,56 +1,30 @@
 
+<div *ngIf="isLoading"i class="loading">Loading...</div>
 <div class="datuma-form mat-elevation-z8" *ngIf="workOrder">
+  <div *ngIf="!isLoading">
   <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()" novalidate class="form-horizontal">
-    <div class="d-flex flex-row justify-content-between">
-        <div class="p-2 ">
-          <button  type=button class="small btn" (click)="onBackFromDetail()">Back to List</button>
-        </div>
+    <div class="d-flex flex-row justify-content-between top-content">
+      <div class="p-2 ">
+        <!--<button  type=button class="small btn" (click)="onBackFromDetail()">Back to List</button>-->
+        <button  type=button class="small btn" (click)="onBackFromDetail()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
       <div class="p-2 justify-content-center">
-          <div class="form-group">
-            <mat-form-field>
-              <mat-select id="" formControlName="workOrderStatus" class="test-padding">
-                <mat-option *ngFor="let s of workOrderStatusList" [value]="s.id">{{s.description}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-              <!--<label for=""><h6>Status</h6></label>
-              <select id="" formControlName="workOrderStatus" class="form-control form-control-sm">
-                <option *ngFor="let s of workOrderStatusList" [ngValue]="s.id">{{s.description}}</option>
-              </select>
-            -->
-              <!--
-              <label *ngFor="let status of workOrderStatusList" class="radio-inline padding">
-               <input (change)="statusChange()" type="radio" formControlName="workOrderStatus" class="form-control">
-              <input type="radio" formControlName="workOrderStatus" class="form-control" 
-                  value="{{status.description}}"
-                [attr.disabled]="disabledStatus(status.description)">
-                {{status.description}}
-              </label>
-            -->
-            </div>
+          <mat-form-field>
+            <mat-select id="" formControlName="workOrderStatus">
+              <mat-option *ngFor="let s of workOrderStatusList" [value]="s.id">{{s.description}}</mat-option>
+            </mat-select>
+          </mat-form-field>
       </div>    
      <!-- <div class="p-2"><button type=button class="small btn btn-warning" (click)="toggleDisabledForm()">Edit</button>
         </div>-->
       <div class="p-2">
-          <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Update</button>
-        </div>
+        <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Update</button>
       </div>
+    </div>
+  <div class="mat-elevation-z8"> 
   <div class="row">
-    <div class="col-md-5">
-      <div class="form-group">
-        <div class="d-flex justify-content-center">
-          <label for="unitIdSelect"><h6>{{workOrder.locationUnit.unitType}}</h6></label>
-        </div>
-        <select id="unitIdSelect" formControlName="unitId" class="form-control form-control-lg">
-          <option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</option> 
-        </select>
-      </div>
-      <!--<mat-form-field>
-        <mat-select>
-          <mat-option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</mat-option> 
-        </mat-select>
-      </mat-form-field>
-    -->
-     </div>
     <div class="col-md-7">
       <div class="form-group">
         <div class="d-flex justify-content-center">
@@ -61,6 +35,22 @@
         </select>
       </div>
     </div>
+    <div class="col-md-5">
+        <div class="form-group">
+          <div class="d-flex justify-content-center">
+            <label for="unitIdSelect"><h6>{{workOrder.locationUnit.unitType}}</h6></label>
+          </div>
+          <select id="unitIdSelect" formControlName="unitId" class="form-control form-control-lg">
+            <option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</option> 
+          </select>
+        </div>
+        <!--<mat-form-field>
+          <mat-select>
+            <mat-option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</mat-option> 
+          </mat-select>
+        </mat-form-field>
+      -->
+       </div>
   </div>
   <div class="form-row  d-flex justify-content-center">
     <div class="d-flex justify-content-center">
@@ -167,5 +157,7 @@
       <!--<p><input type="te" formControlName="dueDate" value="{{workOrder.dueDate}}" /></p>-->
     </div>
   </div>
+  </div>
   </form>
+  </div>
 </div>

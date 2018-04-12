@@ -33,6 +33,7 @@ export class WorkOrderDetailComponent implements OnInit {
   @Output() onWoUpdated = new EventEmitter<boolean>();
   @Output() onBackFromDtl = new EventEmitter<boolean>();
 
+  isLoading: boolean = false;
   //workOrderStatusList: WorkOrderStatus[];
   workOrderForm : FormGroup;
   workOrderMod: WorkOrder;
@@ -45,6 +46,17 @@ export class WorkOrderDetailComponent implements OnInit {
 
   priorityIds: number[] = [1,2, 3];
   items: any[] = [];
+  formDirty: boolean;
+
+  isDirty(): boolean{
+    if(this.workOrder.workOrderJob.id != this.workOrderForm.controls['workOrderJob'].value){
+      console.log('dirty');
+    }else{
+      console.log('clean')
+    }
+    return false;
+  }
+
   getWorkOrderStatusList(): void{
 
     this.workOrderService.getWorkOrderStatusTypes()
@@ -75,6 +87,7 @@ export class WorkOrderDetailComponent implements OnInit {
   }
 
   resetForm(): void {
+    this.isLoading = true;
     this.workOrderService.getWoDropdowns()
       .subscribe(
         data=>{
@@ -82,8 +95,9 @@ export class WorkOrderDetailComponent implements OnInit {
           this.locationUnits = data[1],
           this.workOrderStatusList = data[2],
           this.woJobList = data[3].woJobList,
-          this.assignedTos = data[4]
-          console.log('combined results:' + JSON.stringify(data))
+          this.assignedTos = data[4];
+          this.isLoading = false;
+          //console.log('combined results:' + JSON.stringify(data))
         },
         err=>{
           console.log('error getting lists');
@@ -166,7 +180,8 @@ export class WorkOrderDetailComponent implements OnInit {
   }
 
   onBackFromDetail(el: string):void{
-
+    console.log('detail.onBackFromDetail')
+    this.isDirty();
     this.onBackFromDtl.emit(true);
   }
 

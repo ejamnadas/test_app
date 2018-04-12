@@ -8,6 +8,9 @@ form{
   border: 1px lightblue;
 }
 
+.top-content{
+  background: white;
+}
 .status-selected{
   background-color: #F0FFFF;
 }
