@@ -84,7 +84,7 @@ export class WorkOrderService {
 
   getWorkOrderPriorityList():Observable<WorkOrderPriority[]>{
     return this.http.get<WorkOrderPriority[]>( REST_URL + 'work_order_service/getWorkOrderPriorities', this.tenantAuthService.httpOptions ).pipe(
-      tap(workOrderPriorities => console.log('fetched work order priority list' + JSON.stringify(workOrderPriorities))),
+      tap(workOrderPriorities => console.log('fetched work order priority list')),
       catchError(this.handleError<WorkOrderPriority[]>('getWorkOrdersPriorities'))
     );
   }
@@ -200,28 +200,28 @@ export class WorkOrderService {
 
   getUserList():Observable<RUser[]>{
     return this.http.get<RUser[]>( REST_URL + 'work_order_service/getUsers', this.tenantAuthService.httpOptions ).pipe(
-      tap(users => console.log('fetched user list' + JSON.stringify(users))),
+      tap(users => console.log('fetched user list' )),
       catchError(this.handleError<RUser[]>('getUserList'))
     );
   }
 
   getDepartments():Observable<Department[]>{
     return this.http.get<Department[]>( REST_URL + 'work_order_service/getDepartments', this.tenantAuthService.httpOptions ).pipe(
-      tap(departments => console.log('fetched department list' + JSON.stringify(departments)),
+      tap(departments => console.log('fetched department list'),
       catchError(this.handleError<Department[]>('getDepartments'))
     ));
   }
 
   getWorkOrderCategories():Observable<WorkOrderCategory[]>{
     return this.http.get<WorkOrderCategory[]>( REST_URL + 'work_order_service/getWorkOrderCategory', this.tenantAuthService.httpOptions ).pipe(
-      tap(users => console.log('fetched work order category list' + JSON.stringify(users))),
+      tap(users => console.log('fetched work order category list')),
       catchError(this.handleError<WorkOrderCategory[]>('getWorkOrderCategories'))
     );
   }
 
   getLocationUnits():Observable<LocationUnit[]>{
     return this.http.get<LocationUnit[]>( REST_URL + 'work_order_service/getLocationUnit', this.tenantAuthService.httpOptions ).pipe(
-      tap(results => console.log('fetched location units' + JSON.stringify(results))),
+      tap(results => console.log('fetched location units')),
       catchError(this.handleError<LocationUnit[]>('getLocationUnits'))
     );
   }

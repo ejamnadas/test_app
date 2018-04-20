@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, ElementRef, ViewChild, QueryList, ViewChildren } from '@angular/core';
 import { RWorkOrder } from '../entities/RWorkOrder';
 import { WorkOrder } from '../entities/WorkOrder';
 import { WorkOrderNote } from '../entities/WorkOrderNote';
@@ -12,7 +12,10 @@ import { LocationUnit } from '../entities/LocationUnit';
 import { WorkOrderJob } from '../entities/WorkOrderJob';
 import { RUser } from '../entities/RUser';
 import { DatePipe } from '@angular/common/src/pipes';
-import { MatList, MatListItem, MatCard, MatCardContent, MatSelect, MatOption, MatOptgroup } from '@angular/material';
+import { MatList, MatListItem, MatCard, MatCardContent, MatSelect, MatOption, MatOptgroup, MatTooltip } from '@angular/material';
+import { UserService } from '../user.service';
+import { AuthService } from '../auth.service';
+import { delay } from 'q';
 
 @Component({
   selector: 'app-work-order-detail',
@@ -48,13 +51,48 @@ export class WorkOrderDetailComponent implements OnInit {
   items: any[] = [];
   formDirty: boolean;
 
+  @ViewChildren('tooltip') 
+  private tooltip: QueryList<MatTooltip>;
+  
+  //@ViewChildren('ipt') 
+  //public inputs: QueryList<ElementRef>;
+  //private input: ElementRef;
+  
+  ngAfterViewInit() {
+    //console.log('workOrderDetail.ngAfterViewInit');
+    /*this.inputs.changes.subscribe((el: QueryList<ElementRef>)=>
+    {
+      //this.input = el.first;
+      console.log('input changes');
+      el.map(x=>console.log(x.nativeElement.value));
+      el.map(x=>x.nativeElement.focus());
+      //console.log(JSON.stringify(el.first));
+      //console.log('ngAfterViewInit :' + this.input.nativeElement.value);
+    });
+    */
+    
+    this.tooltip.changes.subscribe((el: QueryList<MatTooltip>)=>
+      {
+        el.map(t=>{
+          t.show();
+        });
+        
+      });
+
+  }
+
   isDirty(): boolean{
-    if(this.workOrder.workOrderJob.id != this.workOrderForm.controls['workOrderJob'].value){
+  //  if(this.workOrder.workOrderJobid != this.workOrderForm.controls['workOrderJob'].value){
+   //if(this.workOrder.workOrderJob.id != this.workOrderForm.controls['workOrderJob'].value){
+  console.log('work order form: ' + JSON.stringify(this.workOrderForm.value));   
+  console.log('work Order: ' +JSON.stringify(this.workOrder));   
+    if(this.workOrderForm.value != this.workOrder){
       console.log('dirty');
+      return true;
     }else{
       console.log('clean')
+      return false;
     }
-    return false;
   }
 
   getWorkOrderStatusList(): void{
@@ -84,6 +122,9 @@ export class WorkOrderDetailComponent implements OnInit {
       unitId: ['', Validators.required],
       description: ['', Validators.required]
     });
+
+    
+    
   }
 
   resetForm(): void {
@@ -103,7 +144,6 @@ export class WorkOrderDetailComponent implements OnInit {
           console.log('error getting lists');
         }
       ); 
-    if(this.workOrder){
    // console.log(this.workOrder);
     if (this.workOrder){
       this.workOrderForm.reset ({
@@ -118,9 +158,9 @@ export class WorkOrderDetailComponent implements OnInit {
         unitId: this.workOrder.locationUnit.id
       });
 
-     console.log('work order unit id:' + JSON.stringify(this.workOrder.workOrderPriority)); 
-     console.log('wo priority list: ' + JSON.stringify(this.workOrderPriorityList));
-     console.log(JSON.stringify(this.workOrder));
+      console.log('work order unit id:' ); 
+      console.log('wo priority list: ' );
+      console.log(JSON.stringify(this.workOrder));
      // this.workOrderForm.controls['workOrderPriority'].
       //  setValue(2, {onlySelf: true});
       this.setNotes(this.workOrder.workOrderNotes);
@@ -128,15 +168,14 @@ export class WorkOrderDetailComponent implements OnInit {
       //this.workOrderForm.controls['dueDate'].disable();
       //this.workOrderForm.disable();
       //this.workOrderForm.controls['workOrderStatus'].disable();
-    }
-
-    //this.woStatusOrig = this.workOrder.workOrderStatus.id;
-    this.woStatusOrig = this.workOrder.workOrderStatus.id;
+      this.woStatusOrig = this.workOrder.workOrderStatus.id;
+      this.toggledDisableControls(false);
+  //    this.tooltip.nativeElement.focus();
     }
   }
 
   setNotes(notes: WorkOrderNote[]) {
-    console.log(notes);
+   // console.log(notes);
     const noteFGs = notes.map(note => this.fb.group(note));
     const notesFormArray = this.fb.array(noteFGs);
     this.workOrderForm.setControl('workOrderNotes', notesFormArray);
@@ -182,7 +221,25 @@ export class WorkOrderDetailComponent implements OnInit {
   onBackFromDetail(el: string):void{
     console.log('detail.onBackFromDetail')
     this.isDirty();
+    this.onWoUpdated.emit(true);
     this.onBackFromDtl.emit(true);
+  }
+
+  toggledDisableControls(enable: boolean):void{
+    
+    console.log('User Detail: ' + JSON.stringify(this.authService.getUserDetail()));
+    
+    if(enable){
+      this.workOrderForm.controls['description'].enable();
+      this.workOrderForm.controls['workOrderJob'].enable();
+      this.workOrderForm.controls['unitId'].enable();
+    }else{
+      this.workOrderForm.controls['description'].disable();
+      this.workOrderForm.controls['workOrderJob'].disable();
+      this.workOrderForm.controls['unitId'].disable();
+    }
+    
+
   }
 
   toggleDisabledForm():void{
@@ -219,12 +276,12 @@ export class WorkOrderDetailComponent implements OnInit {
   onSubmit():void{
     console.log("submitted");
     this.workOrderMod = this.preSaveWorkOrder();
-    console.log("update wo json: " + JSON.stringify(this.workOrderMod));
+    //console.log("update wo json: " + JSON.stringify(this.workOrderMod));
     this.workOrderService.updateWorkOrder(this.workOrderMod)
       //.subscribe(wo => console.log(wo.id));
       .subscribe(wo =>
         {
-          console.log('test');
+         // console.log('test');
           console.log('updated wo: ' + JSON.stringify(wo));
           this.workOrder = wo;
           this.woUpdated(true);
@@ -238,49 +295,49 @@ export class WorkOrderDetailComponent implements OnInit {
   }
 
   preSaveWorkOrder(): WorkOrder{
-      const formModel = this.workOrderForm.value;
+    this.toggledDisableControls(true);    
+    const formModel = this.workOrderForm.value;
+    console.log('form model: ' + JSON.stringify(formModel));
+    console.log('preSaveWorkOrder workOrderStatus: ' + this.workOrderForm.get('workOrderStatus').value);
+    switch(this.workOrderForm.get('workOrderStatus').value){
+      case "COMPLETE":{
 
-      console.log('preSaveWorkOrder workOrderStatus: ' + this.workOrderForm.get('workOrderStatus').value);
-      switch(this.workOrderForm.get('workOrderStatus').value){
-        case "COMPLETE":{
-
-          this.workOrderStatusId = 4;
-          //console.log('Complete' + this.workOrderStatusId);
-          break;
-        }
-        case "NEW": {
-          this.workOrderStatusId = 1;
-          //console.log('New' + this.workOrderStatusId);
-          break;
-        }
-        case "IN-PROGRESS": {
-          this.workOrderStatusId = 2;
-          //console.log('In PROGRESS' + this.workOrderStatusId);
-          break;
-        }
-
+        this.workOrderStatusId = 4;
+        //console.log('Complete' + this.workOrderStatusId);
+        break;
+      }
+      case "NEW": {
+        this.workOrderStatusId = 1;
+        //console.log('New' + this.workOrderStatusId);
+        break;
+      }
+      case "IN-PROGRESS": {
+        this.workOrderStatusId = 2;
+        //console.log('In PROGRESS' + this.workOrderStatusId);
+        break;
+      }
     }
+    //console.log("work order status id: " + this.workOrderStatusId);
+    let wo = new WorkOrder();
+    wo.id = this.workOrder.id;
+    wo.workOrderStatusId = this.workOrderStatusId;
+    wo.workOrderStatusId = formModel.workOrderStatus;
+    wo.completedDate =  formModel.completedDate;
+    wo.workOrderNotes = formModel.workOrderNotes;
+    wo.unitId = formModel.unitId;
+    wo.jobId = formModel.workOrderJob;
+    wo.workOrderPriorityId = formModel.workOrderPriority;
+    wo.title = formModel.title;
+    wo.description = formModel.description;
 
-      //console.log("work order status id: " + this.workOrderStatusId);
-      let wo = new WorkOrder();
-      wo.id = this.workOrder.id;
-      wo.workOrderStatusId = this.workOrderStatusId;
-      wo.workOrderStatusId = formModel.workOrderStatus;
-      wo.completedDate =  formModel.completedDate;
-      wo.workOrderNotes = formModel.workOrderNotes;
-      wo.unitId = formModel.unitId;
-      wo.jobId = formModel.workOrderJob;
-      wo.workOrderPriorityId = formModel.workOrderPriority;
-      wo.title = formModel.title;
-      wo.description = formModel.description;
-
-      console.log('presave workorder:: ' + JSON.stringify(wo));
-      const saveWorkOrder: WorkOrder = wo;
-      return saveWorkOrder;
+    console.log('presave workorder:: ' + JSON.stringify(wo));
+    const saveWorkOrder: WorkOrder = wo;
+    this.toggledDisableControls(false);
+    return saveWorkOrder;
   }
 
   woUpdated(updated: boolean) {
-    this.onWoUpdated.emit(true);
+    //this.onWoUpdated.emit(true);
     this.resetForm();
   }
 
@@ -328,11 +385,8 @@ export class WorkOrderDetailComponent implements OnInit {
   }
 
 
-
-
-
-
-  constructor(private fb: FormBuilder, private workOrderService: WorkOrderService ) {
+  constructor(private fb: FormBuilder, private workOrderService: WorkOrderService, 
+    private authService: AuthService ) {
     this.componentName = 'work-order-detail';
     console.log('work-order')
     this.createForm();

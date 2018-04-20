@@ -1,57 +1,44 @@
 
 <div *ngIf="isLoading"i class="loading">Loading...</div>
-<div class="datuma-form mat-elevation-z8" *ngIf="workOrder">
+<div *ngIf="workOrder">
+<div class="datuma-form mat-elevation-z8">
   <div *ngIf="!isLoading">
   <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()" novalidate class="form-horizontal">
-    <div class="d-flex flex-row justify-content-between top-content">
-      <div class="p-2 ">
+    <div class="d-flex flex-row justify-content-center top-content">
+      <div class="p-2 mr-auto">
         <!--<button  type=button class="small btn" (click)="onBackFromDetail()">Back to List</button>-->
         <button  type=button class="small btn" (click)="onBackFromDetail()">
             <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="p-2 justify-content-center">
-          <mat-form-field>
-            <mat-select id="" formControlName="workOrderStatus">
-              <mat-option *ngFor="let s of workOrderStatusList" [value]="s.id">{{s.description}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-      </div>    
-     <!-- <div class="p-2"><button type=button class="small btn btn-warning" (click)="toggleDisabledForm()">Edit</button>
-        </div>-->
       <div class="p-2">
-        <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Update</button>
-      </div>
-    </div>
-  <div class="mat-elevation-z8"> 
-  <div class="row">
-    <div class="col-md-7">
-      <div class="form-group">
-        <div class="d-flex justify-content-center">
-        <label class="form-label" for="workOrderJobSelect"><h6 class="justify-content-center">JOB</h6></label>
-        </div>
+        <!--<select class="form-control form-control-lg" id="workOrderJobSelect" formControlName="workOrderJob">-->
         <select class="form-control form-control-lg" id="workOrderJobSelect" formControlName="workOrderJob">
           <option *ngFor="let j of woJobList" [ngValue]="j.id">{{j.woJobName}}</option>
         </select>
       </div>
+      <div class="p-2">
+        <select id="unitIdSelect" formControlName="unitId" class="form-control form-control-lg">
+          <option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</option> 
+        </select>
+      </div>
+      <div class="p-2 ml-auto">
+          <mat-form-field>
+            <mat-select id="" formControlName="workOrderStatus" matTooltip="Change Status Here" 
+                #tooltip="matTooltip" >
+              <mat-option *ngFor="let s of workOrderStatusList" [value]="s.id">{{s.description}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+         <!-- <input #ipt value="viewchild"/> -->
+      </div> 
+     <!-- <div class="p-2"><button type=button class="small btn btn-warning" (click)="toggleDisabledForm()">Edit</button>
+        </div>-->
+      <!--<div class="p-2">
+        <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success">Update</button>
+      </div>-->
     </div>
-    <div class="col-md-5">
-        <div class="form-group">
-          <div class="d-flex justify-content-center">
-            <label for="unitIdSelect"><h6>{{workOrder.locationUnit.unitType}}</h6></label>
-          </div>
-          <select id="unitIdSelect" formControlName="unitId" class="form-control form-control-lg">
-            <option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</option> 
-          </select>
-        </div>
-        <!--<mat-form-field>
-          <mat-select>
-            <mat-option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</mat-option> 
-          </mat-select>
-        </mat-form-field>
-      -->
-       </div>
-  </div>
+  <div class="mat-elevation-z8"> 
+
   <div class="form-row  d-flex justify-content-center">
     <div class="d-flex justify-content-center">
       <label for="description" class="col-md-12 form-label"><h6>DETAILS</h6></label>
@@ -86,7 +73,8 @@
           <mat-form-field class="example-container">
             <textarea class="text-area text-center" matInput placeholder="Write Notes" matTextareaAutosize matAutosizeMinRows="3"
             matAutosizeMaxRows="5" [(ngModel)]="newNoteInput"
-              id="addNotesText"  [ngModelOptions]="{standalone:true}" (keyup.enter)="onEnterNotes()"></textarea>
+              id="addNotesText"  [ngModelOptions]="{standalone:true}" (keyup.enter)="onEnterNotes()"
+              matTooltip="Enter comments here" #tooltip="matTooltip" ></textarea>
            <!-- <mat-hint align="end">Enter updates here</mat-hint> -->
           </mat-form-field>
         </div>
@@ -159,5 +147,10 @@
   </div>
   </div>
   </form>
+  </div>
+</div>
+<div class="p-2">
+    <button type="submit" value="submit" [disabled]="!workOrderForm.valid" class="btn btn-success" 
+      (click)="onSubmit()">Update</button>
   </div>
 </div>

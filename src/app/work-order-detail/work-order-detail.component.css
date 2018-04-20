@@ -81,3 +81,8 @@ div.mat-list-item-content{
 .summary{
   margin: 0;
 }
+
+.form-control:disabled, .form-control[readonly] {
+  background-color: #fff;
+  opacity: 1;
+}

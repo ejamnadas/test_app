@@ -1,18 +1,48 @@
-<div class="row">
-<div class="col-md-6">
+<mat-menu #addTaskMenu="matMenu">
+    <a routerLink="/work-order-create" routerLinkActive="active">
+      <button mat-menu-item>
+        <small>Add Maintenance Task</small>
+      </button>
+      </a>
+</mat-menu>
+
+<mat-menu #authMenu="matMenu">
+  <button mat-menu-item>
+   <a class="success">{{tenantAuthService.getCompany()}}</a>
+    <span><a style="color: blue;" (click)="tenantAuthService.logout()">Switch</a></span>
+  </button>
+   <a class="nav-link" style="cursor: pointer;" (click)="authService.logOut()" *ngIf="authService.isAuthenticated()">Logout</a>
+</mat-menu>
+
+<div class="d-flex flex-row">
+<div class="p-2">
 <h5>{{title}}</h5>
 </div>
-<div class="col-md-6">
-<div class="d-flex justify-content-start  ">
-  <div class="ml-auto p-2">
-      <ng-template [ngIf]="!tenantAuthService.isLoggedOut()">
-          <a class="success">{{tenantAuthService.getCompany()}}</a>
-          <a style="color: blue;" (click)="tenantAuthService.logout()">Switch</a>
-      </ng-template>
+
+<ng-template [ngIf]="authService.isAuthenticated()">
+  <div class="p-2">
+    <button mat-icon-button [matMenuTriggerFor]="addTaskMenu">
+      <mat-icon class="" svgIcon="add_circle"></mat-icon>
+    </button>
   </div>
- </div>
+  <div class="p-2 mr-auto">
+     <a class="" routerLink="/work-order-list">
+    <button mat-icon-button><mat-icon class="" svgIcon="list_black_24"></mat-icon></button><span>Task List</span>
+    </a>
+  </div>
+      <!--<li class="list-inline-item"><a class="nav-link" routerLink="/work-order-create" routerLinkActive="active">Create</a></li>
+      <li class="list-inline-item"><a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a></li>
+      --> 
+</ng-template>
+<div class="p-2">
+  <ng-template [ngIf]="!tenantAuthService.isLoggedOut()">
+    <button mat-icon-button [matMenuTriggerFor]="authMenu">
+      <mat-icon class="" svgIcon="person_black_24"></mat-icon>
+    </button>
+  </ng-template>
 </div>
 </div>
+<!--
 <div class="d-flex justify-content-start  ">
     <div class="p-2">
       <ul class="list-inline">
@@ -35,6 +65,7 @@
         </ul>
     </div>
   </div>
+-->
 <!--<nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="collapse navbar-collapse" id="navarText">
     <ul class="navbar-nav">
@@ -53,6 +84,7 @@
   </div>
 </nav>
 -->
+<hr class="pb-xs"/>
 <div class="">
   <!--<div class="col-md-12">-->
     <app-message></app-message>

@@ -14,7 +14,7 @@ import { TenantAuthService } from './auth/tenant/tenant-auth.service';
 export class AuthService{
 
   token: string;
-  user: User;
+  private user: User;
   isLoggedIn = false;
   redirectUrl: string;
 
@@ -52,12 +52,12 @@ export class AuthService{
             );
             console.log('logged in');
             console.log(JSON.stringify(firebase.auth().currentUser.email));
-            this.userService.getUserByUsername(firebase.auth().currentUser.email)
+           this.userService.getUserByUsername(firebase.auth().currentUser.email)
               .subscribe(
                 user=>
                 {
                   this.user =  user;
-                  console.log('results: ' + JSON.stringify(this.user));
+                  console.log('user results: ' + JSON.stringify(this.user));
                   this.isLoggedIn = true;
                 }, 
                 error => console.log('error: ' + error)
@@ -90,7 +90,7 @@ export class AuthService{
   }
 
   isAuthenticated() {
-   /* 
+    /*
     if(this.tenantAuthService.isAuthenticated()){
       if(this.token != null){
         this.isLoggedIn = true;
@@ -106,6 +106,12 @@ export class AuthService{
     return this.isLoggedIn;
     */
     return true;
+  }
+
+  getUserDetail():User{
+    console.log(this.user);
+    console.log(this.isLoggedIn);
+    return this.user;
   }
     
 }

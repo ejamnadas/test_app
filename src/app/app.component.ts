@@ -4,6 +4,8 @@ import { TenantAuthService } from './auth/tenant/tenant-auth.service';
 
 
 import * as firebase from 'firebase';
+import { MatIconRegistry } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
 
 interface UserRoles {
   email: string;
@@ -17,11 +19,27 @@ interface UserRoles {
 })
 
 export class AppComponent {
-  title = 'Mobile Hotel';
+  title = 'Hotel Tasks';
 
 
 
-  constructor(private authService: AuthService, private tenantAuthService: TenantAuthService) {}
+  constructor(private authService: AuthService, private tenantAuthService: TenantAuthService, 
+    iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+      iconRegistry.addSvgIcon(
+        'nav_before',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/nav_before_24.svg'))
+      .addSvgIcon(
+        'add_circle',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/ic_add_circle_black_24px.svg'))
+      .addSvgIcon(
+        'person_black_24',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/ic_person_black_24px.svg'))
+       .addSvgIcon(
+        'list_black_24',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/ic_list_black_24px.svg'));
+ 
+        
+    }
   ngOnInit() {
     firebase.initializeApp({
       apiKey: "AIzaSyC87JhbrxVGMHEUd2pEnUM3jFXxUEantVE",

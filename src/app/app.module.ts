@@ -33,7 +33,10 @@ import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPagina
   MatOptgroup,
   MatDrawer,
   MatDrawerContainer,
-  MatSidenavModule} from '@angular/material';
+  MatSidenavModule,
+  MatTooltipModule,
+  MatIconModule,
+  MatMenuModule} from '@angular/material';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { WorkOrderTblDrawerComponent } from './work-order-tbl-drawer/work-order-tbl-drawer.component';
@@ -89,7 +92,8 @@ var firebaseConfig = {
     MatCardModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
-    MatSelectModule, MatOptionModule, MatSidenavModule
+    MatSelectModule, MatOptionModule, MatSidenavModule, MatTooltipModule, MatIconModule, MatButtonModule,
+    MatMenuModule
   ],
   providers: [WorkOrderService, MessageService, AuthService, UserService, 
     TenantAuthService],

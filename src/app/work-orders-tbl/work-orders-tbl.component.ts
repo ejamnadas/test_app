@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, QueryList } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { RWorkOrder } from '../entities/RWorkOrder';
 import { WorkOrderService } from '../work-order.service';
@@ -24,8 +24,17 @@ export class WorkOrdersTblComponent implements OnInit {
   
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  @ViewChild('ipt') inputs: QueryList<ElementRef>;
+
+  input: ElementRef;
+  
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.inputs.changes.subscribe((el: QueryList<ElementRef>)=>
+    {
+      this.input = el.first
+      console.log('ngAfterViewInit :' + this.input.nativeElement.value);
+    });
   }
 
   getWorkOrders(): void {
@@ -85,6 +94,7 @@ export class WorkOrdersTblComponent implements OnInit {
   
   onBackFromDetail(el: string):void{
     this.opened = "true";
+    this.selectedWorkOrder = null;
   }
 
   filterCompleted():void{
@@ -110,6 +120,11 @@ export class WorkOrdersTblComponent implements OnInit {
     this.getWorkOrders();
     this.opened = "true";
     this.dataSource.filterPredicate = (data: RWorkOrder, filter: string) => data.workOrderStatus.description == filter;
+  }
+  ngOnChanges()
+  {
+
+    console.log('ngOnChanges: ' + this.input.nativeElement.value);
   }
 
 }
