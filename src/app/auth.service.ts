@@ -90,8 +90,8 @@ export class AuthService{
   }
 
   isAuthenticated() {
-    /*
-    if(this.tenantAuthService.isAuthenticated()){
+  
+   /* if(this.tenantAuthService.isAuthenticated()){
       if(this.token != null){
         this.isLoggedIn = true;
       }else{
@@ -104,7 +104,7 @@ export class AuthService{
     }
     //console.log('isAuthenticated:' + this.isLoggedIn);
     return this.isLoggedIn;
-    */
+   */
     return true;
   }
 

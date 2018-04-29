@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 
 import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
 import { WorkOrderJob } from '../entities/WorkOrderJob';
+import { Observable } from 'rxjs/Observable';
+import { DialogService } from '../dialog.service';
 
 @Component({
   selector: 'app-work-order-create',
@@ -34,7 +36,7 @@ export class WorkOrderCreateComponent implements OnInit {
   @ViewChild('fileInput') fileInput: ElementRef;
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService,
-    private router: Router) { }
+    private router: Router, private dialogService: DialogService) { }
 
   getFormLists(): void{
     console.log('getFormLists');
@@ -161,7 +163,12 @@ export class WorkOrderCreateComponent implements OnInit {
             );
     }
 
-
+    canDeactivate(): Observable<boolean> | boolean {
+      console.log('canDeactive');
+      // Allow synchronous navigation (`true`) if no crisis or the crisis is unchanged
+      // observable which resolves to true or false when the user decides
+      return this.dialogService.confirm('Discard changes?');
+    }
 
   ngOnInit() {
     //this.getWorkOrderPriorityList();

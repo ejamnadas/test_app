@@ -4,11 +4,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { WorkOrdersComponent } from './work-orders/work-orders.component';
 import { WorkOrderCreateComponent } from './work-order-create/work-order-create.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { CanDeactivateGuard } from './can-deactivate-guard.service';
 import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './auth-guard.service';
 import { LoginComponent } from './auth/tenant/login/login.component';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component';
 import { WorkOrderTblDrawerComponent } from './work-order-tbl-drawer/work-order-tbl-drawer.component';
+
 
 const appRoutes: Routes = [
   { path: 'work-order-list', 
@@ -19,7 +21,8 @@ const appRoutes: Routes = [
   { 
     path: 'work-order-create', 
     component: WorkOrderCreateComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateGuard] 
   },
   { path: 'site-login',
     component: LoginComponent
@@ -49,6 +52,9 @@ const appRoutes: Routes = [
   ],
   exports: [
     RouterModule
+  ],
+  providers: [
+    CanDeactivateGuard
   ]
 })
 

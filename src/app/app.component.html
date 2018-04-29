@@ -40,6 +40,12 @@
       <mat-icon class="" svgIcon="person_black_24"></mat-icon>
     </button>
   </ng-template>
+  <ng-template [ngIf]="!authService.isAuthenticated() && tenantAuthService.isLoggedOut()">
+    <ul class="list-inline">
+     <li class="list-inline-item"><a routerLink="/signup" routerLinkActive="active">Register</a></li>
+     <li class="list-inline-item"><a routerLink="/signin" routerLinkActive="active">Login</a></li>
+    </ul>
+  </ng-template>
 </div>
 </div>
 <!--
@@ -84,7 +90,7 @@
   </div>
 </nav>
 -->
-<hr class="pb-xs"/>
+<hr/>
 <div class="">
   <!--<div class="col-md-12">-->
     <app-message></app-message>

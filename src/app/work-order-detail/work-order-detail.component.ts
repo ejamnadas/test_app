@@ -16,6 +16,8 @@ import { MatList, MatListItem, MatCard, MatCardContent, MatSelect, MatOption, Ma
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
 import { delay } from 'q';
+import { DialogService } from '../dialog.service';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-work-order-detail',
@@ -31,6 +33,7 @@ export class WorkOrderDetailComponent implements OnInit {
   assignedTos: RUser[];
 
   newNoteInput: string;
+  noteLengthOrinal: number;
   
   @Input() workOrder: RWorkOrder;
   @Output() onWoUpdated = new EventEmitter<boolean>();
@@ -86,7 +89,8 @@ export class WorkOrderDetailComponent implements OnInit {
    //if(this.workOrder.workOrderJob.id != this.workOrderForm.controls['workOrderJob'].value){
   console.log('work order form: ' + JSON.stringify(this.workOrderForm.value));   
   console.log('work Order: ' +JSON.stringify(this.workOrder));   
-    if(this.workOrderForm.value != this.workOrder){
+    if(this.workOrderForm.controls['workOrderStatus'].pristine == false || 
+      this.workOrder.workOrderNotes.length != this.noteLengthOrinal ){
       console.log('dirty');
       return true;
     }else{
@@ -171,6 +175,7 @@ export class WorkOrderDetailComponent implements OnInit {
       this.woStatusOrig = this.workOrder.workOrderStatus.id;
       this.toggledDisableControls(false);
   //    this.tooltip.nativeElement.focus();
+      this.noteLengthOrinal = this.workOrder.workOrderNotes.length;
     }
   }
 
@@ -220,9 +225,16 @@ export class WorkOrderDetailComponent implements OnInit {
 
   onBackFromDetail(el: string):void{
     console.log('detail.onBackFromDetail')
-    this.isDirty();
-    this.onWoUpdated.emit(true);
-    this.onBackFromDtl.emit(true);
+    var isDirty = this.isDirty();
+    let discard: boolean = false;
+    if(isDirty ){
+      //this.dialogService.confirm('Discard unsaved changed?');
+      discard = confirm("Discard unsaved changes?");
+    }
+    if((isDirty && discard) || !isDirty ){
+      this.onWoUpdated.emit(true);
+      this.onBackFromDtl.emit(true);
+    }
   }
 
   toggledDisableControls(enable: boolean):void{
@@ -272,6 +284,10 @@ export class WorkOrderDetailComponent implements OnInit {
     return this.disabledForm;
     //return null;
   }
+  
+  resetNotesLength():void{
+    this.noteLengthOrinal = this.workOrder.workOrderNotes.length;
+  }
 
   onSubmit():void{
     console.log("submitted");
@@ -285,6 +301,7 @@ export class WorkOrderDetailComponent implements OnInit {
           console.log('updated wo: ' + JSON.stringify(wo));
           this.workOrder = wo;
           this.woUpdated(true);
+          this.resetNotesLength();
 
         },
       err=>{
@@ -386,7 +403,7 @@ export class WorkOrderDetailComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService, 
-    private authService: AuthService ) {
+    private authService: AuthService, private dialogService: DialogService ) {
     this.componentName = 'work-order-detail';
     console.log('work-order')
     this.createForm();
@@ -402,5 +419,17 @@ export class WorkOrderDetailComponent implements OnInit {
     console.log('ngOneChanges');
     this.disabledForm = "true";
     this.resetForm();
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    console.log('canDeactive');
+    // Allow synchronous navigation (`true`) if no crisis or the crisis is unchanged
+    if (!this.workOrder || this.workOrderForm.controls['workOrderStatus'].pristine == false || 
+    this.workOrder.workOrderNotes.length != this.noteLengthOrinal ) {
+     return true;
+    }
+    // Otherwise ask the user with the dialog service and return its
+    // observable which resolves to true or false when the user decides
+    return this.dialogService.confirm('Discard changes?');
   }
 }

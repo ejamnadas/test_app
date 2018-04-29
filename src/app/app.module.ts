@@ -40,6 +40,7 @@ import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPagina
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { WorkOrderTblDrawerComponent } from './work-order-tbl-drawer/work-order-tbl-drawer.component';
+import { DialogService } from './dialog.service';
 /*
 const appRoutes: Routes = [
   { path: 'work-order-list', component: WorkOrdersComponent},
@@ -96,7 +97,7 @@ var firebaseConfig = {
     MatMenuModule
   ],
   providers: [WorkOrderService, MessageService, AuthService, UserService, 
-    TenantAuthService],
+    TenantAuthService, DialogService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
