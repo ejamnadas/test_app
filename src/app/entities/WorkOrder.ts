@@ -17,9 +17,10 @@ export class WorkOrder{
   completedDate: string;
   workOrderPriorityId: number;
   unitId: number;
-  workOrderStatusId: number;
+  workOrderStatusId?: number;
   workOrderNotes: WorkOrderNote[];
   jobId: number; 
+  pmActionHeadId: number;
 //  photo: string | any;
   //base64ImageString: string;  
 

@@ -8,7 +8,7 @@
       </ul>-->
       <div class="d-flex justify-content-end">
         <div class="form-group form-inline hotel-user-input small">
-          <mat-checkbox class="form-control" [align]=start [(ngModel)]="completedOnly" (change)="filter()">See Completed Only</mat-checkbox>
+          <mat-checkbox class="form-control"  [(ngModel)]="completedOnly" (change)="filter()">See Completed Only</mat-checkbox>
         </div>
       </div>
       <div class="row sticky-top table-header">
@@ -38,7 +38,7 @@
     </div>
     </div>
   <div class="col-md-6" #detail>
-   <app-work-order-detail [workOrder]="selectedWorkOrder"
+   <!--<app-work-order-detail [workOrder]="selectedWorkOrder"
     (onWoUpdated)="onWoUpdated($event)"
-    (onBackFromDtl)="onBackFromDetail($event)" ></app-work-order-detail>
+    (onBackFromDtl)="onBackFromDetail($event)" ></app-work-order-detail>-->
   </div>

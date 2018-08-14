@@ -23,7 +23,7 @@ export class AppComponent {
 
 
 
-  constructor(private authService: AuthService, private tenantAuthService: TenantAuthService, 
+  constructor(public authService: AuthService, public tenantAuthService: TenantAuthService, 
     iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
       iconRegistry.addSvgIcon(
         'nav_before',
@@ -36,8 +36,14 @@ export class AppComponent {
         sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/ic_person_black_24px.svg'))
        .addSvgIcon(
         'list_black_24',
-        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/ic_list_black_24px.svg'));
- 
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/ic_list_black_24px.svg'))
+        .addSvgIcon(
+        'baseline-lock-open',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/baseline-lock_open-24px.svg'))
+        .addSvgIcon(
+        'baseline-lock',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/img/icon/baseline-lock-24px.svg'));
+
         
     }
   ngOnInit() {

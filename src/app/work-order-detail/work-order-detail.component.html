@@ -1,15 +1,17 @@
 
-<div *ngIf="isLoading"i class="loading">Loading...</div>
+<div *ngIf="isLoading" class="loading">Loading...</div>
 <div *ngIf="workOrder">
 <div class="datuma-form mat-elevation-z8">
   <div *ngIf="!isLoading">
   <form [formGroup]="workOrderForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()" novalidate class="form-horizontal">
-    <div class="d-flex flex-row justify-content-center top-content">
-      <div class="p-2 mr-auto">
+    <!--<div class="d-flex flex-row justify-content-center top-content">-->
+     <div class="row">
+      <!--<div class="p-2 mr-auto">-->
+        <div class="col-md-8">
         <!--<button  type=button class="small btn" (click)="onBackFromDetail()">Back to List</button>-->
-        <button  type=button class="small btn" (click)="onBackFromDetail()">
+       <!-- <button  type=button class="small btn" (click)="onBackFromDetail()">
             <span aria-hidden="true">&times;</span>
-        </button>
+        </button>->
       </div>
       <div class="p-2">
         <!--<select class="form-control form-control-lg" id="workOrderJobSelect" formControlName="workOrderJob">-->
@@ -17,12 +19,14 @@
           <option *ngFor="let j of woJobList" [ngValue]="j.id">{{j.woJobName}}</option>
         </select>
       </div>
-      <div class="p-2">
+      <!--<div class="p-2">-->
+      <div class="col-md-2">
         <select id="unitIdSelect" formControlName="unitId" class="form-control form-control-lg">
           <option *ngFor="let u of locationUnits" [ngValue]="u.id">{{u.unitDescription}}</option> 
         </select>
       </div>
-      <div class="p-2 ml-auto">
+      <!--<div class="p-2 ml-auto">-->
+        <div class="col-md-2">
           <mat-form-field>
             <mat-select id="" formControlName="workOrderStatus" matTooltip="Change Status Here" 
                 #tooltip="matTooltip" >
@@ -41,12 +45,12 @@
 
   <div class="form-row  d-flex justify-content-center">
     <div class="d-flex justify-content-center">
-      <label for="description" class="col-md-12 form-label"><h6>DETAILS</h6></label>
+      <label for="description" class="col-md-12 form-label"><h5>DETAILS</h5></label>
     </div>
     <div class="col-md-12">
-      <textarea id="description" class="form-control form-control-md" placeholder="Description" formControlName="description" 
+      <textarea id="description" class="form-control form-control-lg text-center text-warning font-weight-bold" placeholder="Description" formControlName="description" 
               value="{{workOrder.description}}"  matAutosizeMinRows="3"
-              matAutosizeMaxRows="4"></textarea>
+              matAutosizeMaxRows="4" ></textarea>
     </div>
     <!-- <div class="col-md-12">
        <mat-form-field class="max-size form-group">
@@ -144,18 +148,30 @@
       <p>{{workOrder.dueDate | date: 'MM/dd/yy' }} </p>
       <!--<p><input type="te" formControlName="dueDate" value="{{workOrder.dueDate}}" /></p>-->
     </div>
+    <div class="col border-right justify-content-center">
+      <button type="button"  (click)="toggleDisabledForm(true)" mat-icon-button>
+        <mat-icon [ngClass]="{'d-none': isControlDisabled() }"  svgIcon="baseline-lock-open"></mat-icon>
+        <mat-icon [ngClass]="{'d-none': isControlDisabled() == false }" svgIcon="baseline-lock"></mat-icon>
+      </button>
+    </div>
   </div>
   </div>
   </form>
   </div>
+  {{this.workOrderForm.value | json}}
+  {{this.workOrderForm.status}}
   <!--
   {{ workOrderForm.get('workOrderStatus').pristine }}
   {{ workOrderNotes.length }}
   -->
 </div>
 <div class="p-2">
-    <button type="submit" value="submit" [disabled]="!workOrderForm.valid" 
+  <div class="row">
+    <button type="submit" value="submit" [disabled]="!workOrderForm.valid || !isDirty()" class="col-md-6 col-sm-6" 
     [ngClass]="{'btn btn-success':isDirty(), 'btn btn-default': !isDirty()}" 
       (click)="onSubmit()">Save</button>
+
+      <button type="submit" value="Cancel" class="btn btn-danger col-md-6 col-sm-6" (click)="onBackFromDetail()">Cancel</button>
+  </div>
   </div>
 </div>

@@ -7,13 +7,13 @@ import { LocationUnit } from '../entities/LocationUnit';
 import { WorkOrderCategory } from '../entities/WorkOrderCategory';
 import { WorkOrderNote } from '../entities/WorkOrderNote';
 import { WorkOrderPriority } from '../entities/WorkOrderPriority';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 //import { DEPARTMENTS, LOCATIONUNITS, WORKORDERTYPES, ASSETS, EMPLOYEES  } from '../lovs/lovs';
 
 import { FormControl, FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
 import { WorkOrderJob } from '../entities/WorkOrderJob';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { DialogService } from '../dialog.service';
 
 @Component({
@@ -32,11 +32,28 @@ export class WorkOrderCreateComponent implements OnInit {
   locationUnits: LocationUnit[];
   assets: Asset[];
   woJobList: WorkOrderJob[];
+  dept_id: number;
+  category_id: number;
 
   @ViewChild('fileInput') fileInput: ElementRef;
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService,
-    private router: Router, private dialogService: DialogService) { }
+    private router: Router, private route: ActivatedRoute, private dialogService: DialogService) { }
+
+   ngOnInit() {
+    //this.getWorkOrderPriorityList();
+  //jh  this.getDepartments();
+    //this.getWorkOrderTypes();
+   // this.getAssignedTos();
+    //this.getLocationUnits();
+
+    this.dept_id = +this.route.snapshot.paramMap.get('dept_id');
+
+    this.category_id = 2;
+    this.getFormLists();
+
+    this.createForm();
+  }
 
   getFormLists(): void{
     console.log('getFormLists');
@@ -103,11 +120,10 @@ export class WorkOrderCreateComponent implements OnInit {
 
   createForm(){
     this.workOrderForm = this.fb.group({
-      title: ['', Validators.required],
       description: ['', Validators.required],
-      workOrderPriorityId: ['', Validators.required],
+      workOrderPriorityId: [2, Validators.required],
       assignedTo: ['', Validators.required],
-      departmentId: ['', Validators.required],
+      departmentId: [this.dept_id, Validators.required],
       workOrderCategoryId: ['', Validators.required],
       unitId: ['', Validators.required],
       dueDate: ['', Validators.required],
@@ -116,10 +132,27 @@ export class WorkOrderCreateComponent implements OnInit {
 
     });
 
-    this.workOrderForm.controls['departmentId'].setValue(1);
-    this.workOrderForm.controls['workOrderCategoryId'].setValue(3);
+    this.workOrderForm.controls['departmentId'].setValue(this.dept_id);
+    this.workOrderForm.controls['workOrderCategoryId'].setValue(this.category_id);
   }
 
+
+    
+
+    onSubmit():void {
+
+          this.workOrder = this.preSaveWorkOrder();
+          console.log('wo save:'  + JSON.stringify(this.workOrder));
+          this.workOrderService.addWorkOrder(this.workOrder)
+            .subscribe(
+              success=> {
+                this.workOrderForm.reset();
+                this.router.navigate(['work-order-list']);
+                console.log('wo added');
+                        },
+              err=> { console.log('error adding wo')}
+            );
+    }
 
     preSaveWorkOrder(): WorkOrder{
       const formModel = this.workOrderForm.value;
@@ -127,7 +160,7 @@ export class WorkOrderCreateComponent implements OnInit {
 
       const savedWorkOrder: WorkOrder = {
           id: null,
-          title: formModel.title,
+          title: '',
           description: formModel.description,
           workOrderPriorityId: formModel.workOrderPriorityId,
           assignedTo: formModel.assignedTo,
@@ -141,7 +174,8 @@ export class WorkOrderCreateComponent implements OnInit {
           orgUnit: 1,
           completedDate: null,
           workOrderNotes: null,
-          jobId: formModel.jobId
+          jobId: formModel.jobId,
+          pmActionHeadId: 2
          // photo: formModel.photo 
 
       };
@@ -149,37 +183,18 @@ export class WorkOrderCreateComponent implements OnInit {
       return savedWorkOrder;
     }
 
-    onSubmit():void {
-
-          this.workOrder = this.preSaveWorkOrder();
-          console.log('wo save:'  + JSON.stringify(this.workOrder));
-          this.workOrderService.addWorkOrder(this.workOrder)
-            .subscribe(
-              success=> {
-                this.router.navigate(['work-order-list']);
-                console.log('wo added');
-                        },
-              err=> { console.log('error adding wo')}
-            );
-    }
-
     canDeactivate(): Observable<boolean> | boolean {
       console.log('canDeactive');
       // Allow synchronous navigation (`true`) if no crisis or the crisis is unchanged
       // observable which resolves to true or false when the user decides
-      return this.dialogService.confirm('Discard changes?');
+      console.log('pristie: ' + this.workOrderForm.pristine);
+      if(!this.workOrderForm.pristine){
+        return this.dialogService.confirm('Discard changes?');
+      }else{
+        console.log('can deactive return false');
+        return true;
+      }
     }
 
-  ngOnInit() {
-    //this.getWorkOrderPriorityList();
-  //jh  this.getDepartments();
-    //this.getWorkOrderTypes();
-   // this.getAssignedTos();
-    //this.getLocationUnits();
-
-    this.getFormLists();
-
-    this.createForm();
-  }
-
+  
 }

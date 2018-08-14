@@ -1,7 +1,7 @@
 import { UserService } from './user.service';
 import * as firebase from 'firebase';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { User } from './entities/User';
 import { MessageService } from './message.service';
 import { HttpClient } from '@angular/common/http';
@@ -46,7 +46,7 @@ export class AuthService{
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(
         response => {
-          firebase.auth().currentUser.getToken()
+          firebase.auth().currentUser.getIdToken()
             .then(
               (token: string) => this.token = token
             );
@@ -82,7 +82,7 @@ export class AuthService{
   }
 
   getToken() {
-    firebase.auth().currentUser.getToken()
+    firebase.auth().currentUser.getIdToken()
       .then(
         (token: string) => this.token = token
       );

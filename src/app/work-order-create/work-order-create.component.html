@@ -6,10 +6,10 @@
         (change)="onFileChange($event)">
     </div>
   -->
-    <div class="form-group">
+    <!--<div class="form-group">
       <label>Work Order</label>
       <input type="text" formControlName="title" class="form-control">
-    </div>
+    </div>-->
     <div class="form-group">
      <label>Job</label>
     <select class="form-control" formControlName="jobId">
@@ -19,9 +19,9 @@
         <div [hidden]="!workOrderForm.controls['jobId'].errors.required">Job is required.</div>
       </div>
     </div>
-    <div *ngIf="workOrderForm.controls['title'].errors && !workOrderForm.controls['title'].pristine" class="alert alert-danger">
+    <!--<div *ngIf="workOrderForm.controls['title'].errors && !workOrderForm.controls['title'].pristine" class="alert alert-danger">
       <div [hidden]="!workOrderForm.controls['title'].errors.required">Work Order Title is required.</div>
-    </div>
+    </div>-->
     <div class="form-group">
       <label>Description</label>
       <textarea rows="3" formControlName="description" class="form-control"></textarea>
@@ -29,7 +29,7 @@
         <div [hidden]="!workOrderForm.controls['description'].errors.required">Description is required.</div>
       </div>
     </div>
-    <div class="form-group">
+    <!--<div class="form-group">
       <label>Priority</label>
         <label *ngFor="let list of workOrderPriorityList" class="radio-inline padding">
           <input type="radio" formControlName="workOrderPriorityId" class="form-control" value="{{list.id}}">
@@ -38,7 +38,7 @@
       <div *ngIf="workOrderForm.controls['workOrderPriorityId'].errors && !workOrderForm.controls['workOrderPriorityId'].pristine" class="alert alert-danger">
         <div [hidden]="!workOrderForm.controls['workOrderPriorityId'].errors.required">Priority is required.</div>
       </div>
-    </div>
+    </div>-->
     <div class="form-group">
       <label>Assigne To</label>
     <select class="form-control" formControlName="assignedTo">
@@ -48,18 +48,18 @@
         <div [hidden]="!workOrderForm.controls['assignedTo'].errors.required">Assigned To is required.</div>
       </div>
     </div>
-    <div class="form-group">
+    <!--<div class="form-group">
       <label>Department</label>
       <select class="form-control" formControlName="departmentId">
         <option *ngFor="let dept of taskDepartments" value="{{dept.id}}" [selected]="dept.description==MAINTENANCE">{{dept.description}}</option>
       </select>
-    </div>
-    <div class="form-group">
+    </div>-->
+    <!--<div class="form-group">
       <label>Task Type</label>
       <select class="form-control" formControlName="workOrderCategoryId">
         <option *ngFor="let list of workOrderCategories" value="{{list.id}}">{{list.description}}</option>
       </select>
-    </div>
+    </div>-->
     <div class="form-group">
       <label>Room or Location</label>
       <select class="form-control" formControlName="unitId">
@@ -72,7 +72,7 @@
     </div>
     <div>
       <button type="submit" class="btn btn-success" [disabled]="!workOrderForm.valid">Submit</button>
-      <button type="button" class="btn" (click)="woForm.reset()">Reset</button>
+      <button type="button" class="btn" (click)="workOrderForm.reset()">Reset</button>
     </div>
   </form>
   <!--

@@ -17,7 +17,9 @@ import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
 import { delay } from 'q';
 import { DialogService } from '../dialog.service';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { PlatformLocation, Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-work-order-detail',
@@ -87,14 +89,19 @@ export class WorkOrderDetailComponent implements OnInit {
   isDirty(): boolean{
   //  if(this.workOrder.workOrderJobid != this.workOrderForm.controls['workOrderJob'].value){
    //if(this.workOrder.workOrderJob.id != this.workOrderForm.controls['workOrderJob'].value){
-  console.log('work order form: ' + JSON.stringify(this.workOrderForm.value));   
-  console.log('work Order: ' +JSON.stringify(this.workOrder));   
+  //console.log('work order form: ' + JSON.stringify(this.workOrderForm.value));   
+  //console.log('work Order: ' +JSON.stringify(this.workOrder));   
     if(this.workOrderForm.controls['workOrderStatus'].pristine == false || 
-      this.workOrder.workOrderNotes.length != this.noteLengthOrinal ){
-      console.log('dirty');
+      this.workOrder.workOrderNotes.length != this.noteLengthOrinal 
+    || this.workOrderForm.controls['workOrderJob'].pristine == false 
+    || this.workOrderForm.controls['description'].pristine == false
+    || this.workOrderForm.controls['unitId'].pristine == false 
+
+){
+//      console.log('dirty');
       return true;
     }else{
-      console.log('clean')
+  //    console.log('clean')
       return false;
     }
   }
@@ -121,7 +128,7 @@ export class WorkOrderDetailComponent implements OnInit {
       workOrderPriority: ['', Validators.required],
       workOrderNotes : this.fb.array([]),
       dueDate: ['', Validators.required],
-      title: ['', Validators.required],
+      title: [''],
       workOrderJob: ['', Validators.required],
       unitId: ['', Validators.required],
       description: ['', Validators.required]
@@ -229,7 +236,7 @@ export class WorkOrderDetailComponent implements OnInit {
     let discard: boolean = false;
     if(isDirty ){
       //this.dialogService.confirm('Discard unsaved changed?');
-      discard = confirm("Discard unsaved changes?");
+      discard = confirm("Discard unsaved changes 2?");
     }
     if((isDirty && discard) || !isDirty ){
       this.onWoUpdated.emit(true);
@@ -284,7 +291,13 @@ export class WorkOrderDetailComponent implements OnInit {
     return this.disabledForm;
     //return null;
   }
-  
+
+  isControlDisabled():boolean{
+    return this.workOrderForm.controls['unitId'].disabled || 
+    this.workOrderForm.controls['description'].disabled ||
+    this.workOrderForm.controls['workOrderJob'].disabled ? true : false; 
+    //return null;
+  }
   resetNotesLength():void{
     this.noteLengthOrinal = this.workOrder.workOrderNotes.length;
   }
@@ -293,7 +306,16 @@ export class WorkOrderDetailComponent implements OnInit {
     console.log("submitted");
     this.workOrderMod = this.preSaveWorkOrder();
     //console.log("update wo json: " + JSON.stringify(this.workOrderMod));
-    this.workOrderService.updateWorkOrder(this.workOrderMod)
+    this.updateWorkOrder().then(result=>{
+      this.onBackFromDetail('sucess');
+    });
+    //this.woUpdated(true);
+  }
+
+
+  updateWorkOrder(){
+    return new Promise((resolve, reject)=>{
+      this.workOrderService.updateWorkOrder(this.workOrderMod)
       //.subscribe(wo => console.log(wo.id));
       .subscribe(wo =>
         {
@@ -302,17 +324,18 @@ export class WorkOrderDetailComponent implements OnInit {
           this.workOrder = wo;
           this.woUpdated(true);
           this.resetNotesLength();
-
+          resolve('success');
         },
       err=>{
         console.log('update wo error');
-      });
-        ;
-    //this.woUpdated(true);
+      })
+    });
   }
 
   preSaveWorkOrder(): WorkOrder{
+    setTimeout(() => {
     this.toggledDisableControls(true);    
+    }, 10000 );
     const formModel = this.workOrderForm.value;
     console.log('form model: ' + JSON.stringify(formModel));
     console.log('preSaveWorkOrder workOrderStatus: ' + this.workOrderForm.get('workOrderStatus').value);
@@ -403,26 +426,44 @@ export class WorkOrderDetailComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private workOrderService: WorkOrderService, 
-    private authService: AuthService, private dialogService: DialogService ) {
+    private authService: AuthService, private dialogService: DialogService, location: PlatformLocation, router: Router, private location2: Location ) {
     this.componentName = 'work-order-detail';
     console.log('work-order')
     this.createForm();
+
+    location.onPopState(()=>{
+      location.onPopState(() => {
+
+        console.log('pressed back!');
+        router.navigate(['work-order-list']);
+        return false;
+    });
+    });
+    
+  this.location2.subscribe(x => console.log('location: ' + x));
   
   }
 
   ngOnInit() {
 
- 
   }
 
   ngOnChanges(){
     console.log('ngOneChanges');
     this.disabledForm = "true";
     this.resetForm();
+    window.scroll(0,0);
   }
-
+/*
   canDeactivate(): Observable<boolean> | boolean {
     console.log('canDeactive');
+
+
+    var isDirty = this.isDirty();
+    if(isDirty){
+      return false;
+    }
+
     // Allow synchronous navigation (`true`) if no crisis or the crisis is unchanged
     if (!this.workOrder || this.workOrderForm.controls['workOrderStatus'].pristine == false || 
     this.workOrder.workOrderNotes.length != this.noteLengthOrinal ) {
@@ -432,4 +473,5 @@ export class WorkOrderDetailComponent implements OnInit {
     // observable which resolves to true or false when the user decides
     return this.dialogService.confirm('Discard changes?');
   }
+*/
 }

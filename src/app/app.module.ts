@@ -36,11 +36,18 @@ import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPagina
   MatSidenavModule,
   MatTooltipModule,
   MatIconModule,
-  MatMenuModule} from '@angular/material';
+  MatMenuModule,
+  MatAutocomplete
+  } from '@angular/material';
+   
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { WorkOrdersTblComponent } from './work-orders-tbl/work-orders-tbl.component'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { WorkOrderTblDrawerComponent } from './work-order-tbl-drawer/work-order-tbl-drawer.component';
 import { DialogService } from './dialog.service';
+import { WorkOrderCreate2Component } from './work-order-create-2/work-order-create-2.component';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { ObsTestComponent } from './obs-test/obs-test.component';
 /*
 const appRoutes: Routes = [
   { path: 'work-order-list', component: WorkOrdersComponent},
@@ -71,7 +78,9 @@ var firebaseConfig = {
     WorkOrderCreateComponent,
     WorkOrderDetailEditComponent,
     WorkOrdersTblComponent,
-    WorkOrderTblDrawerComponent
+    WorkOrderTblDrawerComponent,
+    WorkOrderCreate2Component,
+    ObsTestComponent
   ],
   imports: [
     BrowserModule,
@@ -82,8 +91,9 @@ var firebaseConfig = {
     AdminModule,
     TenantModule,
     AppRoutingModule,
-    AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
+    AngularFirestoreModule,
+    AngularFireModule.initializeApp(firebaseConfig),
     MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -94,10 +104,10 @@ var firebaseConfig = {
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatSelectModule, MatOptionModule, MatSidenavModule, MatTooltipModule, MatIconModule, MatButtonModule,
-    MatMenuModule
+    MatMenuModule, MatAutocompleteModule
   ],
   providers: [WorkOrderService, MessageService, AuthService, UserService, 
-    TenantAuthService, DialogService],
+    TenantAuthService, DialogService, {provide: LocationStrategy, useClass:HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

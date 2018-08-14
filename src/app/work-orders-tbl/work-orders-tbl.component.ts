@@ -4,6 +4,9 @@ import { RWorkOrder } from '../entities/RWorkOrder';
 import { WorkOrderService } from '../work-order.service';
 import { Element } from '@angular/compiler';
 import { WorkOrderStatus } from '../entities/WorkOrderStatus';
+import { Observable } from 'rxjs';
+import { Router, ActivatedRoute, Route, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-work-orders-tbl',
@@ -30,11 +33,11 @@ export class WorkOrdersTblComponent implements OnInit {
   
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.inputs.changes.subscribe((el: QueryList<ElementRef>)=>
+    /*this.inputs.changes.subscribe((el: QueryList<ElementRef>)=>
     {
       this.input = el.first
       console.log('ngAfterViewInit :' + this.input.nativeElement.value);
-    });
+    });*/
   }
 
   getWorkOrders(): void {
@@ -55,7 +58,24 @@ export class WorkOrdersTblComponent implements OnInit {
       });
     }
 
-  constructor(private workOrderService: WorkOrderService){
+  constructor(private workOrderService: WorkOrderService, private router: Router, private actRoute: ActivatedRoute,
+      private location: Location){
+  }
+
+  canDeactivate(
+    currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot,
+    nextState: RouterStateSnapshot): Observable<boolean> | boolean {
+      console.log(nextState.url);
+    console.log('canDeactive wo tbl parent');
+    console.log('rss: ' + JSON.stringify(this.router.routerState.toString()));
+    console.log(this.router.url);
+    console.log(this.actRoute.url);
+    console.log('location: ' + this.location.path);
+    console.log('navigated ' + this.router.navigated);
+//    console.log('rst: ' + this.rst )
+    //console.log(this.route.path);
+    return false;
   }
 
   onSelect(workOrder: RWorkOrder, el): void{
@@ -126,5 +146,7 @@ export class WorkOrdersTblComponent implements OnInit {
 
     console.log('ngOnChanges: ' + this.input.nativeElement.value);
   }
+
+
 
 }

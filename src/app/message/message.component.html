@@ -7,7 +7,7 @@
 </div>
 
 -->
-<div *ngFor="let msg of messageService.messages" class="text-center log-message" id="hideMe">
+<div *ngFor="let msg of messageService.getMessages" class="text-center log-message" id="hideMe">
   <small>{{msg}}</small>
   <div (click)="messageService.clear()">&#10006;</div>
 </div>
