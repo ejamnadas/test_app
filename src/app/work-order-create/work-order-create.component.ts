@@ -170,7 +170,7 @@ export class WorkOrderCreateComponent implements OnInit {
           dueDate: formModel.dueDate,
           assetId: 1,
           workOrderStatusId: 1,
-          assignedBy: 1,
+          assignedBy: 10,
           orgUnit: 1,
           completedDate: null,
           workOrderNotes: null,

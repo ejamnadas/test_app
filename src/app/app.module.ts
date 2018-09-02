@@ -37,7 +37,9 @@ import { MatButtonModule, MatCheckboxModule, MatTable, MatTableModule, MatPagina
   MatTooltipModule,
   MatIconModule,
   MatMenuModule,
-  MatAutocomplete
+  MatAutocomplete,
+  MatDatepickerModule,
+  MatNativeDateModule
   } from '@angular/material';
    
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -104,7 +106,7 @@ var firebaseConfig = {
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatSelectModule, MatOptionModule, MatSidenavModule, MatTooltipModule, MatIconModule, MatButtonModule,
-    MatMenuModule, MatAutocompleteModule
+    MatMenuModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule
   ],
   providers: [WorkOrderService, MessageService, AuthService, UserService, 
     TenantAuthService, DialogService, {provide: LocationStrategy, useClass:HashLocationStrategy}],

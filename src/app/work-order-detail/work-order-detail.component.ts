@@ -248,15 +248,15 @@ export class WorkOrderDetailComponent implements OnInit {
     
     console.log('User Detail: ' + JSON.stringify(this.authService.getUserDetail()));
     
-    if(enable){
+   // if(enable){
       this.workOrderForm.controls['description'].enable();
       this.workOrderForm.controls['workOrderJob'].enable();
       this.workOrderForm.controls['unitId'].enable();
-    }else{
+    /*}else{
       this.workOrderForm.controls['description'].disable();
       this.workOrderForm.controls['workOrderJob'].disable();
       this.workOrderForm.controls['unitId'].disable();
-    }
+    }*/
     
 
   }
